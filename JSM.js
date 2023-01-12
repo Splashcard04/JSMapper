@@ -3,8 +3,7 @@ const fs = require(`fs`)
 /*
     TO DO: 
     Chains,
-    arcs,
-    custom events
+    arcs
 */
 
 const input = "ExpertPlusLawless.dat"
@@ -14,7 +13,7 @@ const diff = JSON.parse(fs.readFileSync(input, 'utf8'))
 diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [] }
 
 class Note {
-    constructor(settings = { time: 0, type: 0 | 1, cutDirection: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 , angleOffset: 0, fake: false, position: [0, 0], worldRotation: [0, 0, 0], rotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: true, color: [1, 1, 1, 1], track: "track", dissolve: [[0, 0], [0, 1]], dissolveArrow: [[1, 0], [1, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], scale: [[1, 1, 1, 0], [1, 1, 1, 1]] }) {
+    constructor(settings = { time: 0, type: 0 | 1, cutDirection: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 , angleOffset: 0, fake: false, position: [0, 0], worldRotation: [0, 0, 0], rotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: true, color: [1, 1, 1, 1], track: "track", dissolve: [[0, 0], [0, 1]], dissolveArrow: [[1, 0], [1, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]] }) {
         if(!settings.time) { this.time = 0 } else { this.time = settings.time }
         if(!settings.angleOffset) { this.angleOffset = 0 } else { this.angleOffset = settings.angleOffset } 
 
@@ -31,6 +30,7 @@ class Note {
         this.localRotation = settings.localRotation
         this.njs = settings.njs
         this.timeOffset = settings.timeOffset
+        this.track = settings.track
 
         if(!settings.interactable) {
             this.uninteractable = false
@@ -66,6 +66,7 @@ class Note {
                     "noteJumpMovementSpeed": this.njs,
                     "noteJumpStartBeatOffset": this.timeOffset,
                     "uninteractable": this.uninteractable,
+                    "track": this.track,
                     "animation": {
                         "color": this.color,
                         "dissolve": this.dissolve,
@@ -90,6 +91,7 @@ class Note {
                     "noteJumpMovementSpeed": this.njs,
                     "noteJumpStartBeatOffset": this.timeOffset,
                     "uninteractable": this.uninteractable,
+                    "track": this.track,
                     "animation": {
                         "color": this.color,
                         "dissolve": this.dissolve,
@@ -346,14 +348,13 @@ class Environment {
 }
 
 class Geometry {
-    constructor(type = "Cube", settings = { material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [] }, scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0], track: "tracK" }) {
-        this.material = settings.material
-        this.type = settings.type
+    constructor(settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [], track: "track" }, scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0] }) {
+        if(!settings.material) { this.material = { shader: "Standard" } } else { this.material = settings.material }
+        if(!settings.type) { this.type = "Cube" } else { this.type = settings.type }
 
         this.scale = settings.scale
         this.position = settings.position
         this.rotation = settings.rotation
-        this.track = settings.track
     }
 
     push() {
@@ -369,8 +370,6 @@ class Geometry {
         })
     }
 }
-
-
 
 class modelToWall {
     constructor(path = "path") {
@@ -417,7 +416,7 @@ class modelToEnvironment {
     push() {
         const objects = this.file.objects
         objects.forEach(obj => {
-            diffGet().customData.environment.push({
+            diff.customData.environment.push({
                 "id": this.id,
                 "lookupMethod": this.lookup,
                 "position": obj.pos,
@@ -470,7 +469,7 @@ class lightEvent {
     }
 
     push() {
-        diffGet().basicBeatmapEvents.push({
+        diff.basicBeatmapEvents.push({
             "b": this.time,
             "et": this.type,
             "i": this.value,
@@ -483,7 +482,142 @@ class lightEvent {
     }
 }
 
+class animateTrack {
+    constructor(settings = { time: 0, type: "Animate Track", track: "track", 
+    animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]],
+    animateDissolve: [[0, 0], [0, 1]], 
+    animateDissolveArrow: [[1, 0], [1, 1]], 
+    animateDefinitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], 
+    animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]],
+    animateColor: [[1, 1, 1, 0], [1, 1, 1, 1]]
+    }) {
+        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
+        if(!settings.type) { this.type = " Animate Track" } else { this.type = settings.type }
 
 
+        const anim = settings.animate
+        const data = { anim }
 
-fs.writeFileSync("ExpertPlusStandard.dat", JSON.stringify(diff, null, 4))
+        if(!settings.data) { this.d = {} } else { this.d = data }
+
+        this.pos = settings.animatePosition
+        this.dis = settings.animateDissolve
+        this.disa = settings.animateDissolveArrow
+        this.defpos = settings.animateDefinitePosition
+        this.scale = settings.animateScale
+        this.color = settings.animateColor
+    }
+
+    push() {
+        diff.customData.customEvents.push({
+            "b": this.time,
+            "t": "AnimateTrack",
+            "d": {
+                "animation": {
+                    "position": this.pos,
+                    "dissolve": this.dis,
+                    "dissolveArrow": this.disa,
+                    "definitePosition": this.defpos,
+                    "scale": this.scale,
+                    "color": this.color
+                }
+            }
+        })
+    }
+}
+
+class assignPlayerToTrack {
+    constructor(settings = { time: 0, track: "track"}) {
+        this.time = settings.time
+        this.track = settings.track
+    }
+
+    push() {
+        diff.customData.customEvents.push({
+            "b": this.time,
+            "t": "AssignPlayerToTrack",
+            "d": { "track": this.track }
+        })
+    }
+}
+
+class assignPathAnimation {
+    constructor(settings = {time: 0, 
+    animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]],
+    animateDissolve: [[0, 0], [0, 1]], 
+    animateDissolveArrow: [[1, 0], [1, 1]], 
+    animateDefinitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], 
+    animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]],
+    animateColor: [[1, 1, 1, 0], [1, 1, 1, 1]]
+    }) {
+        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
+
+        this.pos = settings.animatePosition
+        this.dis = settings.animateDissolve
+        this.disa = settings.animateDissolveArrow
+        this.defpos = settings.animateDefinitePosition
+        this.scale = settings.animateScale
+        this.color = settings.animateColor
+    }
+
+    push() {
+        diff.customData.customEvents.push({
+            "b": this.time,
+            "t": "AssignPathAnimation",
+            "d": {
+                "animation": {
+                    "position": this.pos,
+                    "dissolve": this.dis,
+                    "dissolveArrow": this.disa,
+                    "definitePosition": this.defpos,
+                    "scale": this.scale,
+                    "color": this.color
+                }
+            }
+        })
+    }
+}
+
+class assignFogTrack {
+    constructor(settings = { time: 0, offset: [[0, 0, 0, 0]], attenuation: [[0, 0, 0, 0]], track: "track" }) {
+        this.time = settings.time
+        this.offset = settings.offset
+        this.attentuation = settings.attenuation
+    }
+
+    push() {
+        diff.customData.customEvents.push({
+            "b": this.time,
+            "t": "AssignFogTrack",
+            "d": {
+                "track": this.track,
+                animation: {
+                    "offset": this.offset,
+                    "attenuation": this.attentuation
+                }
+            }
+        })
+    }
+}
+
+
+class Fog {
+    constructor(settings= { attenuation: 0 }) {
+        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
+        if(!settings.attenuation) { this.attenuation = 0 } else { this.attenuation = settings.attenuation }
+    }
+    push() {
+        diff.customData.environment.push({
+            "id": "[0]Environment",
+            "lookupMethod": "EndsWith",
+            "components": {
+                "BloomFogEnvironment": {
+                    "attentuation": this.attenuation
+                }
+            }
+        })
+    }
+}
+
+
+fs.writeFileSync(output, JSON.stringify(diff, null, 4))
