@@ -1,0 +1,73 @@
+{
+    "version": "3.0.0",
+    "bpmEvents": [],
+    "rotationEvents": [],
+    "colorNotes": [],
+    "bombNotes": [],
+    "obstacles": [
+        {
+            "b": 0,
+            "x": 0,
+            "y": 0,
+            "d": 1,
+            "w": 1,
+            "h": 1,
+            "customData": {
+                "color": [
+                    1,
+                    1,
+                    1,
+                    2
+                ],
+                "size": [
+                    1,
+                    1,
+                    1
+                ],
+                "coordinates": [
+                    0,
+                    0
+                ],
+                "worldRotation": [
+                    0,
+                    0,
+                    0
+                ],
+                "noteJumpMovementSpeed": 1,
+                "noteJumpStartBeatOffset": 0,
+                "uninteractable": false,
+                "animation": {
+                    "definitePosition": [
+                        [
+                            0,
+                            0,
+                            0,
+                            0
+                        ]
+                    ],
+                    "dissolve": [
+                        0,
+                        0
+                    ]
+                }
+            }
+        }
+    ],
+    "sliders": [],
+    "burstSliders": [],
+    "waypoints": [],
+    "basicBeatmapEvents": [],
+    "colorBoostBeatmapEvents": [],
+    "lightColorEventBoxGroups": [],
+    "lightRotationEventBoxGroups": [],
+    "basicEventTypesWithKeywords": {},
+    "useNormalEventsAsCompatibleEvents": false,
+    "customData": {
+        "environment": [],
+        "customEvents": [],
+        "fakeColorNotes": [],
+        "fakeBombNotes": [],
+        "fakeObstacles": [],
+        "fakeBurstSliders": []
+    }
+}

@@ -109,7 +109,7 @@ class Note {
 
 
 class Wall {
-    constructor(settings = { time, position, duration, width, height, fake, color, scale, definitePosition, rotation, worldRotation, njs, timeOffset, interactable, dissolve }) {
+    constructor(settings = { time: 0, position: [0, 0], duration: 1, width: 1, height: 1, fake: false, color: [1, 1, 1, 2], scale: [1, 1, 1], definitePosition: [[0, 0, 0, 0]], animateRotation: [0, 0, 0], worldRotation: [0, 0, 0], njs: 1, timeOffset: 0, interactable: true, dissolve : [0, 0]}) {
         this.time = settings.time
         this.fake = settings.fake
 
@@ -618,6 +618,18 @@ class Fog {
         })
     }
 }
+/*
+for(let i = 0; i < 10; i++) {
+    new Note({
+        time: 0
+    }).push()
+    
+    new Note({
+        time: 1
+    }).push()
+}*/
+
+new Wall().push()
 
 
 fs.writeFileSync(output, JSON.stringify(diff, null, 4))
