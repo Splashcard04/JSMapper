@@ -1,4 +1,4 @@
-const fs = require(`fs`)
+import * as fs from 'fs'
 
 /*
     TO DO: 
@@ -8,205 +8,97 @@ const fs = require(`fs`)
 
 const input = "ExpertPlusLawless.dat"
 const output = "ExpertPlusStandard.dat"
-const diff = JSON.parse(fs.readFileSync(input, 'utf8'))
+let diff = JSON.parse(fs.readFileSync(input))
 
 diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [] }
 
-class Note {
-    constructor(settings = { time: 0, type: 0 | 1, cutDirection: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 , angleOffset: 0, fake: false, position: [0, 0], worldRotation: [0, 0, 0], rotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: true, color: [1, 1, 1, 1], track: "track", dissolve: [[0, 0], [0, 1]], dissolveArrow: [[1, 0], [1, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]] }) {
-        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
-        if(!settings.angleOffset) { this.angleOffset = 0 } else { this.angleOffset = settings.angleOffset } 
 
-        if(!settings.cutDirection) {
-            this.cutDirection = 0
-        } else {
-            this.cutDirection = settings.cutDirection
-        }
+export class Note {
+    constructor(settings = { time: 0, type: 0, cutDirection: 0, angleOffset: 0, worldRotation: [0, 0, 0], animateRotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: false, color: [1, 1, 1, 1], track: "track", dissolve: [[0, 0], [0, 1]], dissolveArrow: [[1, 0], [1, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]] }) {
+        if(!settings.time) { this.b = 0 } else { this.b = settings.time }
+        this.x = 0
+        this.y = 0
+        if(!settings.type) { this.c = 0 } else { this.c = settings.type }
+        if(!settings.cutDirection) { this.d = 0 } else { this.d = settings.cutDirection }
+        if(!settings.angleOffset) { this.a = 0 } else { this.a = settings.angleOffset }
 
-        if(!settings.fake) { this.fake = false } else { this.fake = settings.fake }
+        let uninteractable = false
+        if(settings.interactable === true) { uninteractable = false } else { uninteractable = true }
 
-        this.position = settings.position
-        this.rotation = settings.worldRotation
-        this.localRotation = settings.localRotation
-        this.njs = settings.njs
-        this.timeOffset = settings.timeOffset
-        this.track = settings.track
+        const animation = { "color": settings.color, "position": settings.animatePosition,  "dissolve": settings.dissolveArrow, "definitePosition": settings.definitePosition, "scale": settings.animateScale }
 
-        if(!settings.interactable) {
-            this.uninteractable = false
-        } else {
-            if(settings.interactable === true) {
-                this.uninteractable = false
-            } else {
-                this.uninteractable = true
-            }
-        }
-
-        this.color = settings.color
-
-        this.dissolve = settings.dissolve
-        this.dissolveArrow = settings.dissolveArrow
-        this.animatePosition = settings.animatePosition
-        this.definitePosition = settings.definitePosition
-        this.scale = settings.scale
+        this.customData = { "worldRotation": settings.worldRotation, "NJS": settings.njs, "timeOffset": settings.timeOffset, "uninteractable": uninteractable, "track": settings.track, "animation": animation }
     }
 
-    push() {
-        if(this.fake === true) {
-            diff.customData.fakeColorNotes.push({
-                "b": this.time,
-                "x": 0,
-                "y": 0,
-                "c": this.cutDirection,
-                "a": this.angleOffset,
-                "customData": {
-                    "coordinates": this.position,
-                    "worldRotation": this.rotation,
-                    "localRotation": this.localRotation,
-                    "noteJumpMovementSpeed": this.njs,
-                    "noteJumpStartBeatOffset": this.timeOffset,
-                    "uninteractable": this.uninteractable,
-                    "track": this.track,
-                    "animation": {
-                        "color": this.color,
-                        "dissolve": this.dissolve,
-                        "dissolveArrow": this.dissolveArrow,
-                        "position": this.animatePosition,
-                        "definitePosition": this.definitePosition,
-                        "scale": this.scale
-                    }
-                }
-            })
+    push(fake = true) {
+        if(fake === true) {
+            diff.customData.fakeColorNotes.push(this)
         } else {
-            diff.colorNotes.push({
-                "b": this.time,
-                "x": 0,
-                "y": 0,
-                "c": this.cutDirection,
-                "a": this.angleOffset,
-                "customData": {
-                    "coordinates": this.position,
-                    "worldRotation": this.rotation,
-                    "localRotation": this.localRotation,
-                    "noteJumpMovementSpeed": this.njs,
-                    "noteJumpStartBeatOffset": this.timeOffset,
-                    "uninteractable": this.uninteractable,
-                    "track": this.track,
-                    "animation": {
-                        "color": this.color,
-                        "dissolve": this.dissolve,
-                        "dissolveArrow": this.dissolveArrow,
-                        "position": this.animatePosition,
-                        "definitePosition": this.definitePosition,
-                        "scale": this.scale
-                    }
-                }
-            })
+            diff.colorNotes.push(this)
         }
     }
 }
 
 
 
-class Wall {
-    constructor(settings = { time: 0, position: [0, 0], duration: 1, width: 1, height: 1, fake: false, color: [1, 1, 1, 2], scale: [1, 1, 1], definitePosition: [[0, 0, 0, 0]], animateRotation: [0, 0, 0], worldRotation: [0, 0, 0], njs: 1, timeOffset: 0, interactable: true, dissolve : [0, 0]}) {
-        this.time = settings.time
-        this.fake = settings.fake
+export class Wall {
+    constructor(settings = { time: 0, position, duration, width, height, fake, color, scale, definitePosition, rotation, localRotation, worldRotation, njs, timeOffset, interactable, dissolve }) {
+        this.b = settings.time
+        this.x = 0
+        this.y = 0
 
         if(!settings.duration) {
-            this.duration = 10
+            this.d = 10
         } else {
-            this.duration = settings.duration
+            this.d = settings.duration
         }
 
         if(!settings.width) {
-            this.width = 1
+            this.w = 1
         } else {
-            this.width = settings.width
+            this.w = settings.width
         }
 
         if(!settings.height) {
-            this.height = 1
+            this.h = 1
         } else {
-            this.height = settings.height
+            this.h = settings.height
         }
 
+        let position;
         if(!settings.position) {
-            this.position = [0, 0]
+            position = [0, 0]
         } else {
-            this.position = settings.position
+            position = settings.position
         }
 
-        this.color = settings.color
-        this.scale = settings.scale
-        this.defPos = settings.definitePosition
-        this.rotation = settings.rotation
-        this.worldRotation = settings.worldRotation
-        this.njs = settings.njs
-        this.timeOffset = settings.timeOffset
-
+        
+        let uninteractable;
         if(settings.interactable) {
             if(settings.interactable === true) {
-                this.uninteractable = false
+                uninteractable = false
             } else {
-                this.uninteractable = true
+                uninteractable = true
             }
         } else {
-            this.uninteractable = false
+           uninteractable = false
         }
 
-        this.dissolve = settings.dissolve
+        
+
+        this.customData = { "color": settings.color, "size": settings.scale, "uninteractable": uninteractable, "noteJumpMovementSpeed": settings.njs, 
+        "worldRotation": settings.worldRotation,
+        "noteJumpStartBeatOffset": settings.timeOffset, "coordinates": settings.position,
+        "animation": { "dissolve": settings.dissolve, "definitePosition": settings.definitePosition, "localRotation": settings.localRotation} }
 
     }
 
 
-    push() {
-        if(this.fake) {
-            diff.customData.fakeObstacles.push({
-                "b": this.time,
-                "x": 0,
-                "y": 0,
-                "d": this.duration,
-                "w": this.width,
-                "h": this.height,
-                "customData": {
-                    "color": this.color,
-                    "size": this.scale,
-                    "coordinates": this.position,
-                    "worldRotation": this.worldRotation,
-                    "noteJumpMovementSpeed": this.njs,
-                    "noteJumpStartBeatOffset": this.timeOffset,
-                    "uninteractable": this.uninteractable,
-                    "animation": {
-                        "definitePosition": this.defPos,
-                        "localRotation": this.rotation,
-                        "dissolve": this.dissolve
-                    }
-                }
-            })
+    push(fake = false) {
+        if(fake) {
+            diff.customData.fakeObstacles.push(this)
         } else {
-            diff.obstacles.push({
-                "b": this.time,
-                "x": 0,
-                "y": 0,
-                "d": this.duration,
-                "w": this.width,
-                "h": this.height,
-                "customData": {
-                    "color": this.color,
-                    "size": this.scale,
-                    "coordinates": this.position,
-                    "worldRotation": this.worldRotation,
-                    "noteJumpMovementSpeed": this.njs,
-                    "noteJumpStartBeatOffset": this.timeOffset,
-                    "uninteractable": this.uninteractable,
-                    "animation": {
-                        "definitePosition": this.defPos,
-                        "localRotation": this.rotation,
-                        "dissolve": this.dissolve
-                    }
-                }
-            })
+            diff.obstacles.push(this)
         }
     }
 }
@@ -308,6 +200,7 @@ class Environment {
 
             this.Ilight = true
         }
+
     }
 
     push() {
@@ -442,48 +335,9 @@ const lightTypes = {
     gagaRight: 19
 }
 
-class lightEvent {
-    constructor(settings = { time: 0, type: 0 | lightTypes, value: 1, floatValue: 1.0, color: [1, 1, 1, 1], lightID: 100 }) {
-        if(!this.time) { this.time = 0 } else { this.time = settings.time }
-
-        if(!settings.type) {
-            this.type = 0
-        } else {
-            this.type = settings.type
-        }
-
-        if(!settings.value) {
-            this.value = 1
-        } else {
-            this.value = settings.value
-        }
-
-        if(!settings.floatValue) {
-            this.floatValue = 1.0
-        } else {
-            this.floatValue = settings.floatValue
-        }
-
-        this.color = settings.color
-        this.lightID = settings.lightID
-    }
-
-    push() {
-        diff.basicBeatmapEvents.push({
-            "b": this.time,
-            "et": this.type,
-            "i": this.value,
-            "f": this.floatValue,
-            "customData": {
-                "color": this.color,
-                "lightID": this.lightID
-            }
-        })
-    }
-}
 
 class animateTrack {
-    constructor(settings = { time: 0, type: "Animate Track", track: "track", 
+    constructor(settings = { time: 0, track: "track", 
     animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]],
     animateDissolve: [[0, 0], [0, 1]], 
     animateDissolveArrow: [[1, 0], [1, 1]], 
@@ -491,14 +345,8 @@ class animateTrack {
     animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]],
     animateColor: [[1, 1, 1, 0], [1, 1, 1, 1]]
     }) {
-        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
-        if(!settings.type) { this.type = " Animate Track" } else { this.type = settings.type }
+        if(!settings.time) { this.b = 0 } else { this.time = settings.time }
 
-
-        const anim = settings.animate
-        const data = { anim }
-
-        if(!settings.data) { this.d = {} } else { this.d = data }
 
         this.pos = settings.animatePosition
         this.dis = settings.animateDissolve
@@ -506,6 +354,10 @@ class animateTrack {
         this.defpos = settings.animateDefinitePosition
         this.scale = settings.animateScale
         this.color = settings.animateColor
+
+        this.d = { "animation": { "position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
+        "definitePosition": settings.animateDefinitePosition, "scale": settings.animateScale, "color": settings.animateColor
+        }}
     }
 
     push() {
@@ -528,16 +380,12 @@ class animateTrack {
 
 class assignPlayerToTrack {
     constructor(settings = { time: 0, track: "track"}) {
-        this.time = settings.time
-        this.track = settings.track
+        this.b = settings.time
+        this.d = { "track": settings.track }
     }
 
     push() {
-        diff.customData.customEvents.push({
-            "b": this.time,
-            "t": "AssignPlayerToTrack",
-            "d": { "track": this.track }
-        })
+        diff.customData.customEvents.push(this)
     }
 }
 
@@ -552,51 +400,28 @@ class assignPathAnimation {
     }) {
         if(!settings.time) { this.time = 0 } else { this.time = settings.time }
 
-        this.pos = settings.animatePosition
-        this.dis = settings.animateDissolve
-        this.disa = settings.animateDissolveArrow
-        this.defpos = settings.animateDefinitePosition
-        this.scale = settings.animateScale
-        this.color = settings.animateColor
+        this.d = { "animation": { "position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
+        "definitePosition": settings.animateDefinitePosition,
+        "scale": settings.animateScale,
+        "color": settings.animateColor
+        }}
     }
 
     push() {
-        diff.customData.customEvents.push({
-            "b": this.time,
-            "t": "AssignPathAnimation",
-            "d": {
-                "animation": {
-                    "position": this.pos,
-                    "dissolve": this.dis,
-                    "dissolveArrow": this.disa,
-                    "definitePosition": this.defpos,
-                    "scale": this.scale,
-                    "color": this.color
-                }
-            }
-        })
+        diff.customData.customEvents.push(this)
     }
 }
 
 class assignFogTrack {
     constructor(settings = { time: 0, offset: [[0, 0, 0, 0]], attenuation: [[0, 0, 0, 0]], track: "track" }) {
-        this.time = settings.time
-        this.offset = settings.offset
-        this.attentuation = settings.attenuation
+        this.b = settings.time
+
+        let animation = { "offset": settings.offset, "attenuation": settings.attenuation }
+        this.d = { "track": settings.track, "animation": animation}
     }
 
     push() {
-        diff.customData.customEvents.push({
-            "b": this.time,
-            "t": "AssignFogTrack",
-            "d": {
-                "track": this.track,
-                animation: {
-                    "offset": this.offset,
-                    "attenuation": this.attentuation
-                }
-            }
-        })
+        diff.customData.customEvents.push(this)
     }
 }
 
@@ -618,18 +443,37 @@ class Fog {
         })
     }
 }
-/*
-for(let i = 0; i < 10; i++) {
-    new Note({
-        time: 0
-    }).push()
-    
-    new Note({
-        time: 1
-    }).push()
-}*/
 
-new Wall().push()
+export class lightEvent {
+    constructor(settings = { time: 0, type: 0 | lightTypes, value: 1, floatValue: 1.0, color: [1, 1, 1, 1], lightID: 100 }) {
+        if(!settings.time) { this.b = 0 } else { this.b = settings.time }
 
+        if(!settings.type) {
+            this.et = 0
+        } else {
+            this.et = settings.type
+        }
+
+        if(!settings.value) {
+            this.i = 1
+        } else {
+            this.i = settings.value
+        }
+
+        if(!settings.floatValue) {
+            this.f = 1.0
+        } else {
+            this.f = settings.floatValue
+        }
+
+        this.customData = { "color": settings.color, "lightID": settings.color }
+    }
+
+    push() {
+        diff.basicBeatmapEvents.push(this)
+    }
+}
+
+new Wall({ time: 0 }).push()
 
 fs.writeFileSync(output, JSON.stringify(diff, null, 4))
