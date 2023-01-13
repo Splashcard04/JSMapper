@@ -105,16 +105,11 @@ export class Wall {
 
 
 class Bomb {
-    constructor(settings = { time: 0, type: 0 | 1, fake: false, position: [0, 0], worldRotation: [0, 0, 0], rotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: true, color: [1, 1, 1, 1], track: "track", dissolve: [[0, 0], [0, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], scale: [[1, 1, 1, 0], [1, 1, 1, 1]] }) {
-        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
+    constructor(settings = { time: 0, type: 0 | 1, position: [0, 0], worldRotation: [0, 0, 0], localRotation: [0, 0, 0, 0], rotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: true, color: [1, 1, 1, 1], track: "track", dissolve: [[0, 0], [0, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], scale: [[1, 1, 1, 0], [1, 1, 1, 1]] }) {
+        if(!settings.time) { this.b = 0 } else { this.b = settings.time }
 
-        if(!settings.fake) { this.fake = false } else { this.fake = settings.fake }
-
-        this.position = settings.position
-        this.rotation = settings.worldRotation
-        this.localRotation = settings.localRotation
-        this.njs = settings.njs
-        this.timeOffset = settings.timeOffset
+        this.x = 0
+        this.y = 0
 
         if(!settings.interactable) {
             this.uninteractable = false
@@ -126,57 +121,16 @@ class Bomb {
             }
         }
 
-        this.color = settings.color
-
-        this.dissolve = settings.dissolve
-        this.animatePosition = settings.animatePosition
-        this.definitePosition = settings.definitePosition
-        this.scale = settings.scale
+        this.customData = { "coordinates": settings.position, "worldRotation": settings.worldRotation, "localRotation": settings.localRotation, 
+        "rotation": settings.localRotation, "animation": { "dissolve": settings.dissolve, "position": settings.animatePosition, "definitePosition": settings.definitePosition,
+        "scale": settings.scale, "color": settings.color} }
     }
 
-    push() {
-        if(this.fake === true) {
-            diff.customData.fakeBombNotes.push({
-                "b": this.time,
-                "x": 0,
-                "y": 0,
-                "customData": {
-                    "coordinates": this.position,
-                    "worldRotation": this.rotation,
-                    "localRotation": this.localRotation,
-                    "noteJumpMovementSpeed": this.njs,
-                    "noteJumpStartBeatOffset": this.timeOffset,
-                    "uninteractable": this.uninteractable,
-                    "animation": {
-                        "color": this.color,
-                        "dissolve": this.dissolve,
-                        "position": this.animatePosition,
-                        "definitePosition": this.definitePosition,
-                        "scale": this.scale
-                    }
-                }
-            })
+    push(fake = false) {
+        if(fake === true) {
+            diff.customData.fakeBombNotes.push(this)
         } else {
-            diff.bombNotes.push({
-                "b": this.time,
-                "x": 0,
-                "y": 0,
-                "customData": {
-                    "coordinates": this.position,
-                    "worldRotation": this.rotation,
-                    "localRotation": this.localRotation,
-                    "noteJumpMovementSpeed": this.njs,
-                    "noteJumpStartBeatOffset": this.timeOffset,
-                    "uninteractable": this.uninteractable,
-                    "animation": {
-                        "color": this.color,
-                        "dissolve": this.dissolve,
-                        "position": this.animatePosition,
-                        "definitePosition": this.definitePosition,
-                        "scale": this.scale
-                    }
-                }
-            })
+            diff.bombNotes.push(this)
         }
     }
 }
@@ -184,7 +138,7 @@ class Bomb {
 class Environment {
     constructor(settings = { id, lookup: string = "Contains" | "Regex" | "Exact", position, scale, rotation, duplicate, active, localPosition, localRotation, track, lightID, lightType }) {
         this.id = settings.id
-        this.lookup = settings.lookup
+        this.lookupMethod = settings.lookup
         this.position = settings.position
         this.scale = settings.scale
         this.rotation = settings.rotation
@@ -194,56 +148,26 @@ class Environment {
         this.localRotation = settings.localRotation
         this.track = settings.track
 
-        if(settings.lightID || settings.lightType) {
-            this.lightID = settings.lightID
-            this.lightType = settings.lightType
-
-            this.Ilight = true
-        }
+        this.components = { "IlightWithId": { "lightID": settings.lightID, "lightType": settings.lightType } }
 
     }
 
     push() {
         if(this.Ilight === true) {
-            diff.customData.environment.push({
-                "id": this.id,
-                "lookupMethod": this.lookup,
-                "position": this.position,
-                "scale": this.scale,
-                "rotation": this.rotation,
-                "duplicate": this.duplicate,
-                "active": this.active,
-                "localPosition": this.localPosition,
-                "localRotation": this.localRotation,
-                "track": this.track,
-                "components": {
-                    "ILightWithId": {
-                        "lightID": this.lightID,
-                        "lightType": this.lightType
-                    }
-                }
-            })
-        } else {
-            diff.customData.environment.push({
-                "id": this.id,
-                "lookupMethod": this.lookup,
-                "position": this.position,
-                "scale": this.scale,
-                "rotation": this.rotation,
-                "duplicate": this.duplicate,
-                "active": this.active,
-                "localPosition": this.localPosition,
-                "localRotation": this.localRotation,
-                "track": this.track,
-            })
+            diff.customData.environment.push(this)
         }
     }
 }
 
 class Geometry {
     constructor(settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [], track: "track" }, scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0] }) {
-        if(!settings.material) { this.material = { shader: "Standard" } } else { this.material = settings.material }
-        if(!settings.type) { this.type = "Cube" } else { this.type = settings.type }
+        
+        let material;
+        let type;
+        if(!settings.material) { material = { shader: "Standard" } } else { material = settings.material }
+        if(!settings.type) { type = "Cube" } else { type = settings.type }
+
+        this.geometry = { "type": type, "material": material }
 
         this.scale = settings.scale
         this.position = settings.position
@@ -251,16 +175,7 @@ class Geometry {
     }
 
     push() {
-        diff.customData.environment.push({
-            "geometry": {
-                "type": this.type,
-                "material": this.material
-            },
-            "scale": this.scale,
-            "position": this.position,
-            "rotation": this.rotation,
-            "track": this.track
-        })
+        diff.customData.environment.push(this)
     }
 }
 
@@ -270,7 +185,7 @@ class modelToWall {
         const objects = this.path.objects
 
         objects.forEach(obj => {
-            diff.obstacles.push({
+            diff.fakeObstacles.push({
                 "b": 0,
                 "x": 1,
                 "y": 0,
