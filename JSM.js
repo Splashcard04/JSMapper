@@ -314,9 +314,8 @@ class animateTrack {
         this.scale = settings.animateScale
         this.color = settings.animateColor
 
-        this.d = { "animation": { "position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
-        "definitePosition": settings.animateDefinitePosition, "scale": settings.animateScale, "color": settings.animateColor
-        }}
+        this.d = {"position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
+        "definitePosition": settings.animateDefinitePosition, "scale": settings.animateScale, "color": settings.animateColor}
     }
 
     push() {
@@ -326,14 +325,13 @@ class animateTrack {
             "d": {
                 "track": this.track,
                 "duration": this.duration,
-                "animation": {
-                    "position": this.pos,
-                    "dissolve": this.dis,
-                    "dissolveArrow": this.disa,
-                    "definitePosition": this.defpos,
-                    "scale": this.scale,
-                    "color": this.color
-                }
+                "position": this.pos,
+                "dissolve": this.dis,
+                "dissolveArrow": this.disa,
+                "definitePosition": this.defpos,
+                "scale": this.scale,
+                "color": this.color
+
             }
         })
     }
@@ -355,7 +353,10 @@ class assignPlayerToTrack {
 }
 
 class assignPathAnimation {
-    constructor(settings = {time: 0, 
+    constructor(settings = {
+    time: 0, 
+    duration: 10,
+    track: "track",
     animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]],
     animateDissolve: [[0, 0], [0, 1]], 
     animateDissolveArrow: [[1, 0], [1, 1]], 
@@ -363,13 +364,14 @@ class assignPathAnimation {
     animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]],
     animateColor: [[1, 1, 1, 0], [1, 1, 1, 1]]
     }) {
-        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
+        if(!settings.time) { this.b = 0 } else { this.b = settings.time }
+        this.t = "AssignPathAnimation"
 
-        this.d = { "animation": { "position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
+        this.d = { "track": settings.track, "duration": settings.duration, "position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
         "definitePosition": settings.animateDefinitePosition,
         "scale": settings.animateScale,
         "color": settings.animateColor
-        }}
+        }
     }
 
     push() {
@@ -383,6 +385,24 @@ class assignFogTrack {
 
         let animation = { "offset": settings.offset, "attenuation": settings.attenuation }
         this.d = { "track": settings.track, "animation": animation}
+    }
+
+    push() {
+        diff.customData.customEvents.push(this)
+    }
+}
+
+class assignTrackParent {
+    constructor(settings = { time: 0, childTracks: ["hello"], parentTrack: "howdy" }) {
+        if(!settings.time) { this.b = 0 } else { this.b = settings.time }
+
+        let child;
+        let parent;
+
+        if(!settings.childTracks) { child = "track" } else { child = settings.childTracks }
+        if(!settings.parentTrack) { parent = "track" } else { parent = settings.parentTrack }
+
+        this.d = { "childTracks": child, "parentTrack": parent }
     }
 
     push() {
@@ -451,3 +471,34 @@ export class lightEvent {
         diff.basicBeatmapEvents.push(this)
     }
 }
+
+const eyelids = new Map("ExpertPlusLawless.dat", "ExpertPlusStandard.dat")
+
+/*TESTED
+WALL,
+NOTE,
+Geometry,
+model to wall,
+model to geometry,
+light events
+environment,
+static fog,
+animate track,
+assign player to track,
+assign path animation
+assign parent track
+*/
+/*
+To add:
+light id and type to geo,
+assign fog track,
+static fog
+*/
+/*
+ NOT WORKING:
+ model to environment
+*/
+
+
+
+eyelids.save()
