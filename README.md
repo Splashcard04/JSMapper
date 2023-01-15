@@ -16,4 +16,4 @@ and filtering object utilities
 * This framework is meant for people with small amounts of coding experience, if you are more advanced I would highly reccomend Swifter1243's ReMapper
 
 
-### ** To get started with JSmapper, head over to the [wiki](https://github.com/Splashcard04/JSMapper/wiki)
+### **To get started with JSmapper, head over to the [wiki](https://github.com/Splashcard04/JSMapper/wiki)**
