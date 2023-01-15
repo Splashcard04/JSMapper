@@ -1,13 +1,18 @@
-const fs = require(`fs`)
+import * as fs from 'fs'
 
+/*
+    TO DO: 
+    Chains,
+    arcs
+*/
 
-let diff;
+let diff
 
 class Map {
     constructor(input = "ExpertPlusLawless.dat", output = "ExpertPlusStandard.dat") {
         diff = JSON.parse(fs.readFileSync(input))
         this.out = output
-        diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: [] }
+        diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [] }
     }
 
     save() {
@@ -18,17 +23,11 @@ class Map {
 
 
 
-function r(number1 = 0, number2 = 10) {
-    if(number1 > number2) {
-        return Math.random() * (number1 - number2) + number2;
-    } else {
-        return Math.random() * (number2 - number1) + number1;
-    }
-}
 
 
- class Note {
-    constructor(settings = { time: 0, type: 0, cutDirection: 0, angleOffset: 0, worldRotation: [0, 0, 0], position: [0, 0], animateRotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: false, color: [1, 1, 1, 1], track: "track", animateColor: [[0, 0, 0, 0]], dissolve: [[0, 0], [0, 1]], dissolveArrow: [[1, 0], [1, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]] }) {
+
+export class Note {
+    constructor(settings = { time: 0, type: 0, cutDirection: 0, angleOffset: 0, worldRotation: [0, 0, 0], animateRotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: false, color: [1, 1, 1, 1], track: "track", dissolve: [[0, 0], [0, 1]], dissolveArrow: [[1, 0], [1, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]], track: "track" }) {
         if(!settings.time) { this.b = 0 } else { this.b = settings.time }
         this.x = 0
         this.y = 0
@@ -39,9 +38,9 @@ function r(number1 = 0, number2 = 10) {
         let uninteractable = false
         if(settings.interactable === true) { uninteractable = false } else { uninteractable = true }
 
-        const animation = { "color": settings.animateColor, "position": settings.animatePosition,  "dissolve": settings.dissolveArrow, "definitePosition": settings.definitePosition, "scale": settings.animateScale }
+        const animation = { "color": settings.color, "position": settings.animatePosition,  "dissolve": settings.dissolveArrow, "definitePosition": settings.definitePosition, "scale": settings.animateScale }
 
-        this.customData = { "worldRotation": settings.worldRotation, "NJS": settings.njs, "coordinates": settings.position, "color": settings.color, "timeOffset": settings.timeOffset, "uninteractable": uninteractable, "track": settings.track, "animation": animation }
+        this.customData = { "worldRotation": settings.worldRotation, "NJS": settings.njs, "timeOffset": settings.timeOffset, "track": settings.track, uninteractable: uninteractable, "track": settings.track, "animation": animation }
     }
 
     push(fake = true) {
@@ -55,8 +54,8 @@ function r(number1 = 0, number2 = 10) {
 
 
 
- class Wall {
-    constructor(settings = { time: 0, position, duration, width, height, fake, color, scale, definitePosition, rotation, localRotation, worldRotation, njs, timeOffset, interactable, dissolve }) {
+export class Wall {
+    constructor(settings = { time: 0, position, duration, width, height, color, scale, definitePosition, animateRotation, animateLocalRotation, worldRotation, njs, timeOffset, interactable, dissolve, track: "track" }) {
         this.b = settings.time
         this.x = 0
         this.y = 0
@@ -101,9 +100,9 @@ function r(number1 = 0, number2 = 10) {
         
 
         this.customData = { "color": settings.color, "size": settings.scale, "uninteractable": uninteractable, "noteJumpMovementSpeed": settings.njs, 
-        "worldRotation": settings.worldRotation,
+        "worldRotation": settings.worldRotation, "track": settings.track,
         "noteJumpStartBeatOffset": settings.timeOffset, "coordinates": settings.position,
-        "animation": { "dissolve": settings.dissolve, "definitePosition": settings.definitePosition, "localRotation": settings.localRotation} }
+        "animation": { "dissolve": settings.dissolve, "definitePosition": settings.definitePosition, "localRotation": settings.localRotation, "rotation": settings.rotation } }
 
     }
 
@@ -119,7 +118,7 @@ function r(number1 = 0, number2 = 10) {
 
 
 class Bomb {
-    constructor(settings = { time: 0, type: 0 | 1, position: [0, 0], worldRotation: [0, 0, 0], localRotation: [0, 0, 0, 0], animateColor: [0, 0, 0, 0, 0], rotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: true, color: [1, 1, 1, 1], track: "track", dissolve: [[0, 0], [0, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], scale: [[1, 1, 1, 0], [1, 1, 1, 1]] }) {
+    constructor(settings = { time: 0, position: [0, 0], worldRotation: [0, 0, 0], localRotation: [0, 0, 0, 0], rotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: true, color: [1, 1, 1, 1], track: "track", dissolve: [[0, 0], [0, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], scale: [[1, 1, 1, 0], [1, 1, 1, 1]], animateColor: [[0, 0, 0, 0], [0, 0, 0, 1]] }) {
         if(!settings.time) { this.b = 0 } else { this.b = settings.time }
 
         this.x = 0
@@ -135,9 +134,9 @@ class Bomb {
             }
         }
 
-        this.customData = { "coordinates": settings.position, "color": settings.color, "worldRotation": settings.worldRotation, "localRotation": settings.localRotation, 
+        this.customData = { "coordinates": settings.position, "worldRotation": settings.worldRotation, "color": settings.color, "localRotation": settings.localRotation, 
         "rotation": settings.localRotation, "animation": { "dissolve": settings.dissolve, "position": settings.animatePosition, "definitePosition": settings.definitePosition,
-        "scale": settings.scale, "color": settings.animateColor} }
+        "scale": settings.scale, "color": settings.animateColor } }
     }
 
     push(fake = false) {
@@ -167,20 +166,14 @@ class Environment {
     }
 
     push() {
-        diff.customData.environment.push(this)
+        if(this.Ilight === true) {
+            diff.customData.environment.push(this)
+        }
     }
 }
 
-const lookup = {
-    contains: "Contains",
-    regex: "Regex",
-    exact: "Exact",
-    endsWith: "EndsWith",
-    startsWith: "StartsWith"
-}
-
 class Geometry {
-    constructor(settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [], track: "track" } | string, scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0], lightID: 100, lightType: 0 }) {
+    constructor(settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [], track: "track" }, scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0] }) {
         
         let material;
         let type;
@@ -192,8 +185,6 @@ class Geometry {
         this.scale = settings.scale
         this.position = settings.position
         this.rotation = settings.rotation
-
-        this.components = { "ILightWithId": { "lightID": settings.lightID, "lightType": settings.lightType }}
     }
 
     push() {
@@ -202,21 +193,20 @@ class Geometry {
 }
 
 class modelToWall {
-    constructor(path = "path" ,settings = { time: 0, duration: 10 }) {
+    constructor(path = "path") {
         this.path = JSON.parse(fs.readFileSync(path+".rmmodel", 'utf8'))
         const objects = this.path.objects
 
         objects.forEach(obj => {
-            diff.customData.fakeObstacles.push({
-                "b": settings.time,
+            diff.fakeObstacles.push({
+                "b": 0,
                 "x": 1,
                 "y": 0,
-                "d": settings.duration,
+                "d": 100,
                 "w": 1,
                 "h": 3,
                 "customData": {
                     "size": obj.scale,
-                    "color": obj.color,
                     "animation": {
                         "definitePosition": obj.pos,
                         "localRotation": obj.rot
@@ -228,25 +218,20 @@ class modelToWall {
 }
 
 class modelToEnvironment {
-    constructor(path, settings = { id: "Environment", lookup: "Contains", lightID: 100, lightType: 0 }) {
+    constructor(path, settings = { id: "Environment", lookup: "Contains" }) {
         this.file = JSON.parse(fs.readFileSync(path+".rmmodel", 'utf8'))
 
-        let id;
-        let lookup;
-
         if(!settings.id) {
-            id = "Environment"
+            this.id = "Environment"
         } else {
-            id = settings.id
+            this.id = settings.id
         }
 
         if(!settings.lookup) {
-            lookup = "Contains"
+            this.lookup = "Contains"
         } else {
-            lookup = settings.lookup
+            this.lookup = settings.lookup
         }
-
-        this.components = { "IlightWithID": {"lightID": settings.lightID, "lightType": settings.lightType}}
     }
 
     push() {
@@ -255,33 +240,9 @@ class modelToEnvironment {
             diff.customData.environment.push({
                 "id": this.id,
                 "lookupMethod": this.lookup,
-                "localPosition": obj.pos,
-                "localRotation": obj.rot,
-                "scale": obj.scale,
-                "components": this.components
-            })
-        })
-    }
-}
-
-class modeltoGeometry {
-    constructor(path = "Scene", settings = { type: "Cube" }) {
-        this.path = JSON.parse(fs.readFileSync(path+".rmmodel"))
-        this.type = settings.type
-    }
-
-    push() {
-        this.path.objects.forEach(obj => {
-            diff.customData.environment.push({
-                "geometry": {
-                    "type": this.type,
-                    "material": {
-                        "color": obj.color
-                    }
-                },
-                "scale": obj.scale,
                 "position": obj.pos,
-                "localRotation": obj.rot
+                "localRotation": obj.rot,
+                "scale": obj.scale
             })
         })
     }
@@ -304,7 +265,7 @@ const lightTypes = {
 
 
 class animateTrack {
-    constructor(settings = { time: 0, duration: 10, track: "track", 
+    constructor(settings = { time: 0, track: "track", 
     animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]],
     animateDissolve: [[0, 0], [0, 1]], 
     animateDissolveArrow: [[1, 0], [1, 1]], 
@@ -312,10 +273,9 @@ class animateTrack {
     animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]],
     animateColor: [[1, 1, 1, 0], [1, 1, 1, 1]]
     }) {
-        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
-        if(!settings.duration) { this.duration = 10 } else { this.duration = settings.duration }
+        if(!settings.time) { this.b = 0 } else { this.time = settings.time }
 
-        this.track = settings.track
+
         this.pos = settings.animatePosition
         this.dis = settings.animateDissolve
         this.disa = settings.animateDissolveArrow
@@ -323,8 +283,9 @@ class animateTrack {
         this.scale = settings.animateScale
         this.color = settings.animateColor
 
-        this.d = {"position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
-        "definitePosition": settings.animateDefinitePosition, "scale": settings.animateScale, "color": settings.animateColor}
+        this.d = { "animation": { "position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
+        "definitePosition": settings.animateDefinitePosition, "scale": settings.animateScale, "color": settings.animateColor
+        }}
     }
 
     push() {
@@ -332,15 +293,14 @@ class animateTrack {
             "b": this.time,
             "t": "AnimateTrack",
             "d": {
-                "track": this.track,
-                "duration": this.duration,
-                "position": this.pos,
-                "dissolve": this.dis,
-                "dissolveArrow": this.disa,
-                "definitePosition": this.defpos,
-                "scale": this.scale,
-                "color": this.color
-
+                "animation": {
+                    "position": this.pos,
+                    "dissolve": this.dis,
+                    "dissolveArrow": this.disa,
+                    "definitePosition": this.defpos,
+                    "scale": this.scale,
+                    "color": this.color
+                }
             }
         })
     }
@@ -353,19 +313,12 @@ class assignPlayerToTrack {
     }
 
     push() {
-        diff.customData.customEvents.push({ 
-            "b": this.b,
-            "t": "AssignPlayerToTrack",
-            "d": this.d
-         })
+        diff.customData.customEvents.push(this)
     }
 }
 
 class assignPathAnimation {
-    constructor(settings = {
-    time: 0, 
-    duration: 10,
-    track: "track",
+    constructor(settings = {time: 0, 
     animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]],
     animateDissolve: [[0, 0], [0, 1]], 
     animateDissolveArrow: [[1, 0], [1, 1]], 
@@ -373,14 +326,13 @@ class assignPathAnimation {
     animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]],
     animateColor: [[1, 1, 1, 0], [1, 1, 1, 1]]
     }) {
-        if(!settings.time) { this.b = 0 } else { this.b = settings.time }
-        this.t = "AssignPathAnimation"
+        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
 
-        this.d = { "track": settings.track, "duration": settings.duration, "position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
+        this.d = { "animation": { "position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
         "definitePosition": settings.animateDefinitePosition,
         "scale": settings.animateScale,
         "color": settings.animateColor
-        }
+        }}
     }
 
     push() {
@@ -401,32 +353,11 @@ class assignFogTrack {
     }
 }
 
-class assignTrackParent {
-    constructor(settings = { time: 0, childTracks: ["hello"], parentTrack: "howdy" }) {
-        if(!settings.time) { this.b = 0 } else { this.b = settings.time }
 
-        let child;
-        let parent;
-
-        if(!settings.childTracks) { child = "track" } else { child = settings.childTracks }
-        if(!settings.parentTrack) { parent = "track" } else { parent = settings.parentTrack }
-
-        this.d = { "childTracks": child, "parentTrack": parent }
-    }
-
-    push() {
-        diff.customData.customEvents.push(this)
-    }
-}
-
-
-class staticFog {
-    constructor(settings= { attenuation: 0, offset: 0, startY: 0, height: 0 }) {
+class Fog {
+    constructor(settings= { attenuation: 0 }) {
         if(!settings.time) { this.time = 0 } else { this.time = settings.time }
-        this.attenuation = settings.attenuation
-        this.offset = settings.offset
-        this.startY = settings.startY
-        this.height = settings.height
+        if(!settings.attenuation) { this.attenuation = 0 } else { this.attenuation = settings.attenuation }
     }
     push() {
         diff.customData.environment.push({
@@ -434,36 +365,14 @@ class staticFog {
             "lookupMethod": "EndsWith",
             "components": {
                 "BloomFogEnvironment": {
-                    "attenuation": this.attenuation,
-                    "offset": this.offset,
-                    "startY": this.startY,
-                    "height": this.height
+                    "attentuation": this.attenuation
                 }
             }
         })
     }
 }
 
-class animateFog {
-    constructor(settings = { time: 0, track: "fog", attenuation: [0, 0], offset: [0, 0], startY: [0, 0], height: [0, 0]}) {
-
-        this.b = settings.time
-        this.d = { "attenuation": settings.attenuation, "track": settings.track, "offset": settings.offset, "startY": settings.startY, "height": settings.startY }
-    }
-
-    push() {
-        diff.customData.customEvents.push(this)
-    }
-}
-
-const lightValues = {
-    on: 5,
-    off: 0,
-    fade: 7,
-    flash: 6
-}
-
- class lightEvent {
+export class lightEvent {
     constructor(settings = { time: 0, type: 0 | lightTypes, value: 1, floatValue: 1.0, color: [1, 1, 1, 1], lightID: 100 }) {
         if(!settings.time) { this.b = 0 } else { this.b = settings.time }
 
@@ -485,10 +394,13 @@ const lightValues = {
             this.f = settings.floatValue
         }
 
-        this.customData = { "color": settings.color, "lightID": settings.lightID }
+        this.customData = { "color": settings.color, "lightID": settings.color }
     }
 
     push() {
         diff.basicBeatmapEvents.push(this)
     }
 }
+
+
+
