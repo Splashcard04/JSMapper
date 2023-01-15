@@ -1,18 +1,13 @@
 const fs = require(`fs`)
 
-/*
-    TO DO: 
-    Chains,
-    arcs
-*/
 
-let diff
+let diff;
 
 class Map {
     constructor(input = "ExpertPlusLawless.dat", output = "ExpertPlusStandard.dat") {
         diff = JSON.parse(fs.readFileSync(input))
         this.out = output
-        diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [] }
+        diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: [] }
     }
 
     save() {
@@ -23,10 +18,16 @@ class Map {
 
 
 
+function r(number1 = 0, number2 = 10) {
+    if(number1 > number2) {
+        return Math.random() * (number1 - number2) + number2;
+    } else {
+        return Math.random() * (number2 - number1) + number1;
+    }
+}
 
 
-
- class Note {
+class Note {
     constructor(settings = { time: 0, type: 0, cutDirection: 0, angleOffset: 0, worldRotation: [0, 0, 0], animateRotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: false, color: [1, 1, 1, 1], track: "track", dissolve: [[0, 0], [0, 1]], dissolveArrow: [[1, 0], [1, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]], track: "track" }) {
         if(!settings.time) { this.b = 0 } else { this.b = settings.time }
         this.x = 0
@@ -166,14 +167,20 @@ class Environment {
     }
 
     push() {
-        if(this.Ilight === true) {
-            diff.customData.environment.push(this)
-        }
+        diff.customData.environment.push(this)
     }
 }
 
+const lookup = {
+    contains: "Contains",
+    regex: "Regex",
+    exact: "Exact",
+    endsWith: "EndsWith",
+    startsWith: "StartsWith"
+}
+
 class Geometry {
-    constructor(settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [], track: "track" }, scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0] }) {
+    constructor(settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [], track: "track" } | string, scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0], lightID: 100, lightType: 0 }) {
         
         let material;
         let type;
@@ -185,6 +192,8 @@ class Geometry {
         this.scale = settings.scale
         this.position = settings.position
         this.rotation = settings.rotation
+
+        this.components = { "ILightWithId": { "lightID": settings.lightID, "lightType": settings.lightType }}
     }
 
     push() {
@@ -193,20 +202,21 @@ class Geometry {
 }
 
 class modelToWall {
-    constructor(path = "path") {
+    constructor(path = "path" ,settings = { time: 0, duration: 10 }) {
         this.path = JSON.parse(fs.readFileSync(path+".rmmodel", 'utf8'))
         const objects = this.path.objects
 
         objects.forEach(obj => {
-            diff.fakeObstacles.push({
-                "b": 0,
+            diff.customData.fakeObstacles.push({
+                "b": settings.time,
                 "x": 1,
                 "y": 0,
-                "d": 100,
+                "d": settings.duration,
                 "w": 1,
                 "h": 3,
                 "customData": {
                     "size": obj.scale,
+                    "color": obj.color,
                     "animation": {
                         "definitePosition": obj.pos,
                         "localRotation": obj.rot
@@ -218,20 +228,25 @@ class modelToWall {
 }
 
 class modelToEnvironment {
-    constructor(path, settings = { id: "Environment", lookup: "Contains" }) {
+    constructor(path, settings = { id: "Environment", lookup: "Contains", lightID: 100, lightType: 0 }) {
         this.file = JSON.parse(fs.readFileSync(path+".rmmodel", 'utf8'))
 
+        let id;
+        let lookup;
+
         if(!settings.id) {
-            this.id = "Environment"
+            id = "Environment"
         } else {
-            this.id = settings.id
+            id = settings.id
         }
 
         if(!settings.lookup) {
-            this.lookup = "Contains"
+            lookup = "Contains"
         } else {
-            this.lookup = settings.lookup
+            lookup = settings.lookup
         }
+
+        this.components = { "IlightWithID": {"lightID": settings.lightID, "lightType": settings.lightType}}
     }
 
     push() {
@@ -240,9 +255,33 @@ class modelToEnvironment {
             diff.customData.environment.push({
                 "id": this.id,
                 "lookupMethod": this.lookup,
-                "position": obj.pos,
+                "localPosition": obj.pos,
                 "localRotation": obj.rot,
-                "scale": obj.scale
+                "scale": obj.scale,
+                "components": this.components
+            })
+        })
+    }
+}
+
+class modeltoGeometry {
+    constructor(path = "Scene", settings = { type: "Cube" }) {
+        this.path = JSON.parse(fs.readFileSync(path+".rmmodel"))
+        this.type = settings.type
+    }
+
+    push() {
+        this.path.objects.forEach(obj => {
+            diff.customData.environment.push({
+                "geometry": {
+                    "type": this.type,
+                    "material": {
+                        "color": obj.color
+                    }
+                },
+                "scale": obj.scale,
+                "position": obj.pos,
+                "localRotation": obj.rot
             })
         })
     }
@@ -265,7 +304,7 @@ const lightTypes = {
 
 
 class animateTrack {
-    constructor(settings = { time: 0, track: "track", 
+    constructor(settings = { time: 0, duration: 10, track: "track", 
     animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]],
     animateDissolve: [[0, 0], [0, 1]], 
     animateDissolveArrow: [[1, 0], [1, 1]], 
@@ -273,9 +312,10 @@ class animateTrack {
     animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]],
     animateColor: [[1, 1, 1, 0], [1, 1, 1, 1]]
     }) {
-        if(!settings.time) { this.b = 0 } else { this.time = settings.time }
+        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
+        if(!settings.duration) { this.duration = 10 } else { this.duration = settings.duration }
 
-
+        this.track = settings.track
         this.pos = settings.animatePosition
         this.dis = settings.animateDissolve
         this.disa = settings.animateDissolveArrow
@@ -283,9 +323,8 @@ class animateTrack {
         this.scale = settings.animateScale
         this.color = settings.animateColor
 
-        this.d = { "animation": { "position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
-        "definitePosition": settings.animateDefinitePosition, "scale": settings.animateScale, "color": settings.animateColor
-        }}
+        this.d = {"position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
+        "definitePosition": settings.animateDefinitePosition, "scale": settings.animateScale, "color": settings.animateColor}
     }
 
     push() {
@@ -293,14 +332,15 @@ class animateTrack {
             "b": this.time,
             "t": "AnimateTrack",
             "d": {
-                "animation": {
-                    "position": this.pos,
-                    "dissolve": this.dis,
-                    "dissolveArrow": this.disa,
-                    "definitePosition": this.defpos,
-                    "scale": this.scale,
-                    "color": this.color
-                }
+                "track": this.track,
+                "duration": this.duration,
+                "position": this.pos,
+                "dissolve": this.dis,
+                "dissolveArrow": this.disa,
+                "definitePosition": this.defpos,
+                "scale": this.scale,
+                "color": this.color
+
             }
         })
     }
@@ -313,12 +353,19 @@ class assignPlayerToTrack {
     }
 
     push() {
-        diff.customData.customEvents.push(this)
+        diff.customData.customEvents.push({ 
+            "b": this.b,
+            "t": "AssignPlayerToTrack",
+            "d": this.d
+         })
     }
 }
 
 class assignPathAnimation {
-    constructor(settings = {time: 0, 
+    constructor(settings = {
+    time: 0, 
+    duration: 10,
+    track: "track",
     animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]],
     animateDissolve: [[0, 0], [0, 1]], 
     animateDissolveArrow: [[1, 0], [1, 1]], 
@@ -326,13 +373,14 @@ class assignPathAnimation {
     animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]],
     animateColor: [[1, 1, 1, 0], [1, 1, 1, 1]]
     }) {
-        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
+        if(!settings.time) { this.b = 0 } else { this.b = settings.time }
+        this.t = "AssignPathAnimation"
 
-        this.d = { "animation": { "position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
+        this.d = { "track": settings.track, "duration": settings.duration, "position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
         "definitePosition": settings.animateDefinitePosition,
         "scale": settings.animateScale,
         "color": settings.animateColor
-        }}
+        }
     }
 
     push() {
@@ -353,11 +401,32 @@ class assignFogTrack {
     }
 }
 
+class assignTrackParent {
+    constructor(settings = { time: 0, childTracks: ["hello"], parentTrack: "howdy" }) {
+        if(!settings.time) { this.b = 0 } else { this.b = settings.time }
 
-class Fog {
-    constructor(settings= { attenuation: 0 }) {
+        let child;
+        let parent;
+
+        if(!settings.childTracks) { child = "track" } else { child = settings.childTracks }
+        if(!settings.parentTrack) { parent = "track" } else { parent = settings.parentTrack }
+
+        this.d = { "childTracks": child, "parentTrack": parent }
+    }
+
+    push() {
+        diff.customData.customEvents.push(this)
+    }
+}
+
+
+class staticFog {
+    constructor(settings= { attenuation: 0, offset: 0, startY: 0, height: 0 }) {
         if(!settings.time) { this.time = 0 } else { this.time = settings.time }
-        if(!settings.attenuation) { this.attenuation = 0 } else { this.attenuation = settings.attenuation }
+        this.attenuation = settings.attenuation
+        this.offset = settings.offset
+        this.startY = settings.startY
+        this.height = settings.height
     }
     push() {
         diff.customData.environment.push({
@@ -365,11 +434,33 @@ class Fog {
             "lookupMethod": "EndsWith",
             "components": {
                 "BloomFogEnvironment": {
-                    "attentuation": this.attenuation
+                    "attenuation": this.attenuation,
+                    "offset": this.offset,
+                    "startY": this.startY,
+                    "height": this.height
                 }
             }
         })
     }
+}
+
+class animateFog {
+    constructor(settings = { time: 0, track: "fog", attenuation: [0, 0], offset: [0, 0], startY: [0, 0], height: [0, 0]}) {
+
+        this.b = settings.time
+        this.d = { "attenuation": settings.attenuation, "track": settings.track, "offset": settings.offset, "startY": settings.startY, "height": settings.startY }
+    }
+
+    push() {
+        diff.customData.customEvents.push(this)
+    }
+}
+
+const lightValues = {
+    on: 5,
+    off: 0,
+    fade: 7,
+    flash: 6
 }
 
  class lightEvent {
@@ -394,7 +485,7 @@ class Fog {
             this.f = settings.floatValue
         }
 
-        this.customData = { "color": settings.color, "lightID": settings.color }
+        this.customData = { "color": settings.color, "lightID": settings.lightID }
     }
 
     push() {
@@ -402,5 +493,10 @@ class Fog {
     }
 }
 
+
+new Note({
+    time: 0,
+    
+}).push()
 
 
