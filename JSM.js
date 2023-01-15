@@ -1,10 +1,5 @@
 import * as fs from 'fs'
 
-/*
-    TO DO: 
-    Chains,
-    arcs
-*/
 
 let diff
 
@@ -12,18 +7,13 @@ class Map {
     constructor(input = "ExpertPlusLawless.dat", output = "ExpertPlusStandard.dat") {
         diff = JSON.parse(fs.readFileSync(input))
         this.out = output
-        diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [] }
+        diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: [] }
     }
 
     save() {
         fs.writeFileSync(this.out, JSON.stringify(diff, null, 4))
     }
 }
-
-
-
-
-
 
 
 export class Note {
@@ -179,7 +169,7 @@ const lookup = {
 }
 
 class Geometry {
-    constructor(settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [], track: "track" } | string, scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0] }) {
+    constructor(settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [], track: "track" } | string, scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0], lightID: 100, lightType: 0 }) {
         
         let material;
         let type;
@@ -191,6 +181,8 @@ class Geometry {
         this.scale = settings.scale
         this.position = settings.position
         this.rotation = settings.rotation
+
+        this.components = { "ILightWithId": { "lightID": settings.lightID, "lightType": settings.lightType }}
     }
 
     push() {
@@ -225,20 +217,25 @@ class modelToWall {
 }
 
 class modelToEnvironment {
-    constructor(path, settings = { id: "Environment", lookup: "Contains" }) {
+    constructor(path, settings = { id: "Environment", lookup: "Contains", lightID: 100, lightType: 0 }) {
         this.file = JSON.parse(fs.readFileSync(path+".rmmodel", 'utf8'))
 
+        let id;
+        let lookup;
+
         if(!settings.id) {
-            this.id = "Environment"
+            id = "Environment"
         } else {
-            this.id = settings.id
+            id = settings.id
         }
 
         if(!settings.lookup) {
-            this.lookup = "Contains"
+            lookup = "Contains"
         } else {
-            this.lookup = settings.lookup
+            lookup = settings.lookup
         }
+
+        this.components = { "IlightWithID": {"lightID": settings.lightID, "lightType": settings.lightType}}
     }
 
     push() {
@@ -247,9 +244,10 @@ class modelToEnvironment {
             diff.customData.environment.push({
                 "id": this.id,
                 "lookupMethod": this.lookup,
-                "position": obj.pos,
+                "localPosition": obj.pos,
                 "localRotation": obj.rot,
-                "scale": obj.scale
+                "scale": obj.scale,
+                "components": this.components
             })
         })
     }
@@ -435,6 +433,18 @@ class staticFog {
     }
 }
 
+class animateFog {
+    constructor(settings = { time: 0, track: "fog", attenuation: [0, 0], offset: [0, 0], startY: [0, 0], height: [0, 0]}) {
+
+        this.b = settings.time
+        this.d = { "attenuation": settings.attenuation, "track": settings.track, "offset": settings.offset, "startY": settings.startY, "height": settings.startY }
+    }
+
+    push() {
+        diff.customData.customEvents.push(this)
+    }
+}
+
 const lightValues = {
     on: 5,
     off: 0,
@@ -472,33 +482,3 @@ export class lightEvent {
     }
 }
 
-const eyelids = new Map("ExpertPlusLawless.dat", "ExpertPlusStandard.dat")
-
-/*TESTED
-WALL,
-NOTE,
-Geometry,
-model to wall,
-model to geometry,
-light events
-environment,
-static fog,
-animate track,
-assign player to track,
-assign path animation
-assign parent track
-*/
-/*
-To add:
-light id and type to geo,
-assign fog track,
-static fog
-*/
-/*
- NOT WORKING:
- model to environment
-*/
-
-
-
-eyelids.save()
