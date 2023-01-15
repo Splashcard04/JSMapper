@@ -1,4 +1,6 @@
 # JSMapper
+![untitled](https://user-images.githubusercontent.com/111317032/212526580-10b7dce9-c500-48c0-bc5f-04aacf482b30.png)
+
 
 Welcome to JSMapper (jsm for short).  Jsm provides a
 a handfull of utils and classes to make Beat Saber modcharting easier including,
