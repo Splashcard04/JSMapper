@@ -1,4 +1,4 @@
-import * as fs from 'fs'
+const fs = require(`fs`)
 
 /*
     TO DO: 
@@ -26,7 +26,7 @@ class Map {
 
 
 
-export class Note {
+ class Note {
     constructor(settings = { time: 0, type: 0, cutDirection: 0, angleOffset: 0, worldRotation: [0, 0, 0], animateRotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: false, color: [1, 1, 1, 1], track: "track", dissolve: [[0, 0], [0, 1]], dissolveArrow: [[1, 0], [1, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]], track: "track" }) {
         if(!settings.time) { this.b = 0 } else { this.b = settings.time }
         this.x = 0
@@ -54,7 +54,7 @@ export class Note {
 
 
 
-export class Wall {
+ class Wall {
     constructor(settings = { time: 0, position, duration, width, height, color, scale, definitePosition, animateRotation, animateLocalRotation, worldRotation, njs, timeOffset, interactable, dissolve, track: "track" }) {
         this.b = settings.time
         this.x = 0
@@ -372,7 +372,7 @@ class Fog {
     }
 }
 
-export class lightEvent {
+ class lightEvent {
     constructor(settings = { time: 0, type: 0 | lightTypes, value: 1, floatValue: 1.0, color: [1, 1, 1, 1], lightID: 100 }) {
         if(!settings.time) { this.b = 0 } else { this.b = settings.time }
 
