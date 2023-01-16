@@ -179,6 +179,7 @@ const lookup = {
     startsWith: "StartsWith"
 }
 
+
 class Geometry {
     constructor(settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [], track: "track" } | string, scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0], lightID: 100, lightType: 0 }) {
         
@@ -204,8 +205,10 @@ class Geometry {
 class modelToWall {
     constructor(path = "path" ,settings = { time: 0, duration: 10 }) {
         this.path = JSON.parse(fs.readFileSync(path+".rmmodel", 'utf8'))
-        const objects = this.path.objects
+        this.objects = this.path.objects
+    }
 
+    push() {
         objects.forEach(obj => {
             diff.customData.fakeObstacles.push({
                 "b": settings.time,
@@ -255,6 +258,7 @@ class modelToEnvironment {
             diff.customData.environment.push({
                 "id": this.id,
                 "lookupMethod": this.lookup,
+                "duplicate": 1,
                 "localPosition": obj.pos,
                 "localRotation": obj.rot,
                 "scale": obj.scale,
@@ -265,9 +269,13 @@ class modelToEnvironment {
 }
 
 class modeltoGeometry {
-    constructor(path = "Scene", settings = { type: "Cube" }) {
+    constructor(path = "Scene", settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader, shaderKeywords} }) {
         this.path = JSON.parse(fs.readFileSync(path+".rmmodel"))
         this.type = settings.type
+
+        this.color = settings.material.color
+        this.shader = settings.material.shader
+        this.shaderKeywords = settings.material.shaderKeywords
     }
 
     push() {
@@ -276,7 +284,9 @@ class modeltoGeometry {
                 "geometry": {
                     "type": this.type,
                     "material": {
-                        "color": obj.color
+                        "color": this.color,
+                        "shader": this.shader,
+                        "shaderKeywords": this.shaderKeywords
                     }
                 },
                 "scale": obj.scale,
@@ -286,6 +296,7 @@ class modeltoGeometry {
         })
     }
 }
+
 
 
 const lightTypes = {
@@ -306,6 +317,7 @@ const lightTypes = {
 class animateTrack {
     constructor(settings = { time: 0, duration: 10, track: "track", 
     animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]],
+    animateRotation: [[0, 0, 0, 0], [0, 0, 0, 1]],
     animateDissolve: [[0, 0], [0, 1]], 
     animateDissolveArrow: [[1, 0], [1, 1]], 
     animateDefinitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], 
@@ -324,7 +336,7 @@ class animateTrack {
         this.color = settings.animateColor
 
         this.d = {"position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
-        "definitePosition": settings.animateDefinitePosition, "scale": settings.animateScale, "color": settings.animateColor}
+        "definitePosition": settings.animateDefinitePosition, "scale": settings.animateScale, "color": settings.animateColor }
     }
 
     push() {
@@ -388,18 +400,7 @@ class assignPathAnimation {
     }
 }
 
-class assignFogTrack {
-    constructor(settings = { time: 0, offset: [[0, 0, 0, 0]], attenuation: [[0, 0, 0, 0]], track: "track" }) {
-        this.b = settings.time
 
-        let animation = { "offset": settings.offset, "attenuation": settings.attenuation }
-        this.d = { "track": settings.track, "animation": animation}
-    }
-
-    push() {
-        diff.customData.customEvents.push(this)
-    }
-}
 
 class assignTrackParent {
     constructor(settings = { time: 0, childTracks: ["hello"], parentTrack: "howdy" }) {
@@ -420,34 +421,14 @@ class assignTrackParent {
 }
 
 
-class staticFog {
-    constructor(settings= { attenuation: 0, offset: 0, startY: 0, height: 0 }) {
-        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
-        this.attenuation = settings.attenuation
-        this.offset = settings.offset
-        this.startY = settings.startY
-        this.height = settings.height
-    }
-    push() {
-        diff.customData.environment.push({
-            "id": "[0]Environment",
-            "lookupMethod": "EndsWith",
-            "components": {
-                "BloomFogEnvironment": {
-                    "attenuation": this.attenuation,
-                    "offset": this.offset,
-                    "startY": this.startY,
-                    "height": this.height
-                }
-            }
-        })
-    }
-}
+
+
 
 class animateFog {
     constructor(settings = { time: 0, track: "fog", attenuation: [0, 0], offset: [0, 0], startY: [0, 0], height: [0, 0]}) {
 
         this.b = settings.time
+        this.t = ""
         this.d = { "attenuation": settings.attenuation, "track": settings.track, "offset": settings.offset, "startY": settings.startY, "height": settings.startY }
     }
 
@@ -455,6 +436,8 @@ class animateFog {
         diff.customData.customEvents.push(this)
     }
 }
+
+
 
 const lightValues = {
     on: 5,
@@ -493,10 +476,73 @@ const lightValues = {
     }
 }
 
+class Regex {
+    string = ""
 
-new Note({
-    time: 0,
-    
+    constructor(init = "bruh") { if (init) this.string = init }
+
+    start() { this.string += "\\]"; return this }
+
+    end() { return this.string + "$" }
+
+    add(string = "string") { this.string += string; return this }
+
+    separate(number = 0) {
+        if (number === undefined) this.string += "\\.\\[\\d*\\]";
+        else this.string += `\\.\\[${number}\\]`;
+        return this;
+    }
+
+    vary(ammt = 0) {
+        if (number === undefined) this.string += "(|\\s\\(\\d*\\))";
+        else {
+            if (number === 0) this.string += "";
+            else this.string += ` \\(${number}\\)`
+        }
+        return this;
+    }
+
+}
+
+class staticFog {
+    constructor(settings= { attenuation: 0, offset: 0, startY: 0, height: 0 }) {
+        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
+        this.attenuation = settings.attenuation
+        this.offset = settings.offset
+        this.startY = settings.startY
+        this.height = settings.height
+    }
+    push() {
+        diff.customData.environment.push({
+            "id": "[0]Environment",
+            "lookupMethod": "EndsWith",
+            "components": {
+                "BloomFogEnvironment": {
+                    "attenuation": this.attenuation,
+                    "offset": this.offset,
+                    "startY": this.startY,
+                    "height": this.height
+                }
+            }
+        })
+    }
+}
+
+class animateFog {
+    constructor(settings = { time: 0, track: "track", attenuation: [[0, 0], [0, 1]], offset: [[0, 0], [0, 1]], height: [[0, 0], [0, 1]]}) {
+        this.b = settings.time
+        this.t = "AnimateComponent"
+        this.d = { "BloomFogEnvironment": { "track": settings.track, "attenuation": settings.attenuation, "offset": settings.offset, "height": settings.height } }
+    }
+
+    push() {
+        diff.customData.push(this)
+    }
+}
+
+new animateFog({
+    attenuation: [
+        [0, 0], [0.001,1]
+    ],
+    track: "track"
 }).push()
-
-
