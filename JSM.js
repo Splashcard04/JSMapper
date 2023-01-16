@@ -3,12 +3,12 @@ const fs = require(`fs`)
 /*
 If you are confused why everything is in 1 main js file, let me explain-
 
-imports / exports in js are dumb.
+imports / exports are dumb in js.
 */
 
 let diff = JSON.parse(fs.readFileSync("ExpertPlusLawless.dat", "utf8"))
 
-diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: [] }
+diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
 
 class Map {
     constructor(input = "ExpertPlusLawless.dat", output = "ExpertPlusStandard.dat") {
