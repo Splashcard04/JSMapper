@@ -1,7 +1,8 @@
 const fs = require(`fs`)
 
 
-let diff;
+let diff = JSON.parse(fs.readFileSync("ExpertPlusLawless.dat"))
+diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: [] }
 
 class Map {
     constructor(input = "ExpertPlusLawless.dat", output = "ExpertPlusStandard.dat") {
@@ -16,7 +17,15 @@ class Map {
 }
 
 
-
+const walls = diff.obstacles
+const fakeWalls = diff.customData.fakeObstacles
+const notes = diff.colorNotes
+const fakeNotes = diff.customData.fakeColorNotes
+const bombs = diff.bombNotes
+const fakeBombs = diff.customData.fakeBombNotes
+const chains = diff.burstSliders
+const fakeChains = diff.customData.fakeBurstSliders
+const arcs = diff.sliders
 
 function r(number1 = 0, number2 = 10) {
     if(number1 > number2) {
@@ -422,23 +431,6 @@ class assignTrackParent {
 
 
 
-
-
-class animateFog {
-    constructor(settings = { time: 0, track: "fog", attenuation: [0, 0], offset: [0, 0], startY: [0, 0], height: [0, 0]}) {
-
-        this.b = settings.time
-        this.t = ""
-        this.d = { "attenuation": settings.attenuation, "track": settings.track, "offset": settings.offset, "startY": settings.startY, "height": settings.startY }
-    }
-
-    push() {
-        diff.customData.customEvents.push(this)
-    }
-}
-
-
-
 const lightValues = {
     on: 5,
     off: 0,
@@ -477,30 +469,35 @@ const lightValues = {
 }
 
 class Regex {
+
     string = ""
 
-    constructor(init = "bruh") { if (init) this.string = init }
+    constructor(init = "bruh") { if (init) this.regex = init }
 
-    start() { this.string += "\\]"; return this }
+    start() { this.regex += "\\]"; return this }
 
-    end() { return this.string + "$" }
 
-    add(string = "string") { this.string += string; return this }
 
-    separate(number = 0) {
-        if (number === undefined) this.string += "\\.\\[\\d*\\]";
-        else this.string += `\\.\\[${number}\\]`;
-        return this;
+    add(string = "string") { 
+        this.regex += string; return this 
     }
 
     vary(ammt = 0) {
-        if (number === undefined) this.string += "(|\\s\\(\\d*\\))";
+        if (number === undefined) this.regex += "(|\\s\\(\\d*\\))";
         else {
-            if (number === 0) this.string += "";
-            else this.string += ` \\(${number}\\)`
+            if (number === 0) this.regex += "";
+            else this.regex += ` \\(${number}\\)`
         }
         return this;
     }
+
+    separate(number = 0) {
+        if (number === undefined) this.regex += "\\.\\[\\d*\\]";
+        else this.regex += `\\.\\[${number}\\]`;
+        return this;
+    }
+
+    end() { return this.regex + "$" }
 
 }
 
@@ -536,13 +533,62 @@ class animateFog {
     }
 
     push() {
-        diff.customData.push(this)
+        diff.customData.customEvents.push(this)
     }
 }
 
-new animateFog({
-    attenuation: [
-        [0, 0], [0.001,1]
-    ],
-    track: "track"
-}).push()
+function notesBetween(time, timeEnd, data) {
+    diff.colorNotes.forEach(n => {
+        if(n.b >= time && n.b <= timeEnd) {
+            n.customData = data
+        }
+    })
+
+    diff.customData.fakeColorNotes.forEach(n => {
+        if(n.b >= time && n.b <= timeEnd) {
+            n.customData = data
+        }
+    })
+}
+
+function arcsBetween(time, timeEnd, data) {
+    diff.sliders.forEach(n => {
+        if(n.b >= time && n.b <= timeEnd) {
+            n.customData = data
+        }
+    })
+
+    diff.customData.fakeSliders.forEach(n => {
+        if(n.b >= time && n.b <= timeEnd) {
+            n.customData = data
+        }
+    })
+}
+
+function chainsBetween(time, timeEnd, data) {
+    diff.burstSliders.forEach(n => {
+        if(n.b >= time && n.b <= timeEnd) {
+            n.customData = data
+        }
+    })
+
+    diff.customData.fakeBurstSliders.forEach(n => {
+        if(n.b >= time && n.b <= timeEnd) {
+            n.customData = data
+        }
+    })
+}
+
+function wallsBetween(time, timeEnd, data) {
+    diff.obstacles.forEach(n => {
+        if(n.b >= time && n.b <= timeEnd) {
+            n.customData = data
+        }
+    })
+
+    diff.customData.fakeObstacles.forEach(n => {
+        if(n.b >= time && n.b <= timeEnd) {
+            n.customData = data
+        }
+    })
+}
