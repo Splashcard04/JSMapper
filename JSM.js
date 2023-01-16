@@ -1,5 +1,10 @@
 const fs = require(`fs`)
 
+/*
+If you are confused why everything is in 1 main js file, let me explain-
+
+imports / exports in js are dumb.
+*/
 
 let diff = JSON.parse(fs.readFileSync("ExpertPlusLawless.dat", "utf8"))
 
@@ -12,12 +17,39 @@ class Map {
         diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
     }
 
-    settings(settings = { beatmapcharachter: "expert", require: [], suggest: [] }) {
+    config(settings = { beatmapCarachter: "Standard", require: ["yo"], suggest: ["yo"], settings: { mirrorQuality: 1| 2| 3, noHud: false, advancedHud: false, bloom: 0, disableEnvironmentEnhancements: false, smoke: 0 | 1, shockwaveParticles: 1, burnMarks: true, disableChroma: false } }) {
         const info = JSON.parse(fs.readFileSync("Info.dat", 'utf8'))
 
-        const requirements = info._difficultyBeatmapSets._customData._requirements
-        settings.require.forEach(r =>{
-        requirements.push(r)
+        info._difficultyBeatmapSets.forEach(x => {
+            
+            if(x._beatmapCharacteristicName === settings.beatmapCharacter) {
+                x._difficultyBeatmaps.forEach(y => {
+
+                    y._customData._requirements = settings.require
+                    y._customData._suggestions = settings.suggest
+
+                    y._customData._settings = {
+                        _graphics: {
+                            _mirrorGraphicsSettings: settings.settings.mirrorQuality,
+                            _mainEffectGraphicsSettings: settings.settings.bloom,
+                            _smokeGraphicsSettings: settings.settings.smoke,
+                            _maxShockwaveParticles: settings.settings.shockwaveParticles,
+                            _burnMarkTrailsEnabled: settings.settings.burnMarks
+                        },
+                        _playerOptions: {
+                            _advancedHud: settings.settings.advancedHud,
+                            _noTextsAndHuds: settings.settings.noHud
+                        },
+                        _chroma: {
+                            _disableEnvironmentEnhancements: settings.settings.disableEnvironmentEnhancements,
+                            _disableChromaEvents: settings.settings.disableChroma
+                        }
+                    }
+                })
+            }
+
+            fs.writeFileSync("Info.dat", JSON.stringify(info, null, 4))
+            
         })
     }
 
@@ -535,8 +567,8 @@ class staticFog {
 }
 
 
-class Cinema {
-    constructor(settings = { videoID: "id", videoFile: "hi", position: [0, 0, 0], screenRotation: [0, 0, 0], duration: 10, loop: false, height: 10, transparency: false, bloom: 0 }) {
+class cinemaScreen {
+    constructor(settings = { videoID: "id", videoFile: "hi", position: [0, 0, 0], rotation: [0, 0, 0], duration: 10, loop: false, height: 10, transparency: false, bloom: 0, curvature: 0}) {
         const file = JSON.parse(fs.readFileSync("cinema-video.json", 'utf8'))
 
         if(!settings.videoID) { this.videoID = file.videoID } else { this.videoID = settings.videoID }
@@ -544,12 +576,13 @@ class Cinema {
         this.author = file.author
         if(!settings.videoFile) { this.videoFile = file.videoFile } else { this.videoFile = settings.videoFile }
         this.duration = settings.duration
-        this.screenPosition = settings.screenPosition
-        this.screenRotation = settings.screenRotation
+        this.screenPosition = settings.position
+        this.screenRotation = settings.rotation
         this.loop = settings.loop
         this.screenHeight = settings.height
         this.transparency = settings.transparency
         this.bloom = settings.bloom
+        this.screenCurvature  = settings.curvature
     }
 
     push() {
@@ -624,4 +657,91 @@ function wallsBetween(time, timeEnd, data) {
             n.customData = data
         }
     })
+}
+
+const ease = {
+    Step: "easeStep",
+    Spline: "splineCatmullRom",
+    In: {
+        sine: "easeInSine",
+        quad: "easeInQuad",
+        cubic: "easeInCubic",
+        quart: "easeInQuart",
+        quint: "easeInQuint",
+        expo: "easeInExpo",
+        circ: "easeInCirc",
+        back: "easeInBack",
+        elastic: "easeInElastic",
+        bounce: "easeInBounce"
+    },
+
+    Out: {
+        sine: "easeOutSine",
+        quad: "easeOutQuad",
+        cubic: "easeOutCubic",
+        quart: "easeOutQuart",
+        quint: "easeOutQuint",
+        expo: "easeOutExpo",
+        circ: "easeOutCirc",
+        back: "easeOutBack",
+        elastic: "easeOutElastic",
+        bounce: "easeOutBounce"
+    },
+
+    inOut: {
+        sine: "easeInOutSine",
+        quad: "easeInOutQuad",
+        cubic: "easeInOutCubic",
+        quart: "easeInOutQuart",
+        quint: "easeInOutQuint",
+        expo: "easeInOutExpo",
+        circ: "easeInOutCirc",
+        back: "easeInOutBack",
+        elastic: "easeInOutElastic",
+        bounce: "easeInOutBounce"
+    }
+}
+
+const character = {
+    Standard: "Standard",
+    Lawless: "Lawless"
+}
+
+module.exports = {
+    walls: walls,
+    fakeWalls: fakeWalls,
+    notes: notes,
+    fakeNotes: fakeNotes,
+    bombs: bombs,
+    fakeBombs: fakeBombs,
+    chains: chains,
+    fakeChains: fakeChains,
+    arcs: arcs,
+    Map: Map,
+    Note: Note,
+    Wall: Wall,
+    Bomb: Bomb,
+    Environment: Environment,
+    Geometry: Geometry,
+    modelToWall: modelToWall,
+    modelToEnvironment: modelToEnvironment,
+    modeltoGeometry: modeltoGeometry,
+    animateTrack: animateTrack,
+    assignPathAnimation: assignPathAnimation,
+    assignPlayerToTrack: assignPlayerToTrack,
+    assignTrackParent: assignTrackParent,
+    lightEvent: lightEvent,
+    staticFog: staticFog,
+    animateFog: animateFog,
+    notesBetween: notesBetween,
+    arcsBetween: arcsBetween,
+    chainsBetween: chainsBetween,
+    wallsBetween: wallsBetween,
+    cinemaScreen: cinemaScreen,
+    Regex: Regex,
+    lightValues: lightValues,
+    lightTypes: lightTypes,
+    lookup: lookup,
+    ease: ease,
+    character: character
 }
