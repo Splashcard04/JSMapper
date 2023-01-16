@@ -1,21 +1,30 @@
 const fs = require(`fs`)
 
 
-let diff = JSON.parse(fs.readFileSync("ExpertPlusLawless.dat"))
+let diff = JSON.parse(fs.readFileSync("ExpertPlusLawless.dat", "utf8"))
+
 diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: [] }
 
 class Map {
     constructor(input = "ExpertPlusLawless.dat", output = "ExpertPlusStandard.dat") {
         diff = JSON.parse(fs.readFileSync(input))
         this.out = output
-        diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: [] }
+        diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
+    }
+
+    settings(settings = { beatmapcharachter: "expert", require: [], suggest: [] }) {
+        const info = JSON.parse(fs.readFileSync("Info.dat", 'utf8'))
+
+        const requirements = info._difficultyBeatmapSets._customData._requirements
+        settings.require.forEach(r =>{
+        requirements.push(r)
+        })
     }
 
     save() {
         fs.writeFileSync(this.out, JSON.stringify(diff, null, 4))
     }
 }
-
 
 const walls = diff.obstacles
 const fakeWalls = diff.customData.fakeObstacles
@@ -525,6 +534,29 @@ class staticFog {
     }
 }
 
+
+class Cinema {
+    constructor(settings = { videoID: "id", videoFile: "hi", position: [0, 0, 0], screenRotation: [0, 0, 0], duration: 10, loop: false, height: 10, transparency: false, bloom: 0 }) {
+        const file = JSON.parse(fs.readFileSync("cinema-video.json", 'utf8'))
+
+        if(!settings.videoID) { this.videoID = file.videoID } else { this.videoID = settings.videoID }
+        this.title = file.title
+        this.author = file.author
+        if(!settings.videoFile) { this.videoFile = file.videoFile } else { this.videoFile = settings.videoFile }
+        this.duration = settings.duration
+        this.screenPosition = settings.screenPosition
+        this.screenRotation = settings.screenRotation
+        this.loop = settings.loop
+        this.screenHeight = settings.height
+        this.transparency = settings.transparency
+        this.bloom = settings.bloom
+    }
+
+    push() {
+        fs.writeFileSync("cinema-video.json", JSON.stringify(this, null, 4))
+    }
+}
+
 class animateFog {
     constructor(settings = { time: 0, track: "track", attenuation: [[0, 0], [0, 1]], offset: [[0, 0], [0, 1]], height: [[0, 0], [0, 1]]}) {
         this.b = settings.time
@@ -536,6 +568,7 @@ class animateFog {
         diff.customData.customEvents.push(this)
     }
 }
+
 
 function notesBetween(time, timeEnd, data) {
     diff.colorNotes.forEach(n => {
