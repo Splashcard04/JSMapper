@@ -12,7 +12,7 @@ utils for animation
 and filtering object utilities
 
 # Notes and FAQs
-* Currently all classes are stored in the main file that you will be scripting in, this will hopefully be addressed in a furure update but for now I will walk you through how to minimize the effect of this, see [wiki](https://github.com/Splashcard04/JSMapper/wiki) 
+* All tools are stored in an npm module meaning that node.js is a requirement if you would like to use this tool
 * This framework is meant for people with small amounts of coding experience, if you are more advanced I would highly reccomend [ReMapper](https://github.com/Swifter1243/ReMapper)
 
 
