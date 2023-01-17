@@ -3,7 +3,7 @@ const fs = require(`fs`)
 /*
 If you are confused why everything is in 1 main js file, let me explain-
 
-imports / exports are dumb in js.
+imports / exports in js are dumb.
 */
 
 let diff = JSON.parse(fs.readFileSync("ExpertPlusLawless.dat", "utf8"))
