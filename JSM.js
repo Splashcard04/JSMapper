@@ -17,43 +17,28 @@ class Map {
         diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
     }
 
-    config(settings = { beatmapCarachter: "Standard", require: ["yo"], suggest: ["yo"], settings: { mirrorQuality: 1| 2| 3, noHud: false, advancedHud: false, bloom: 0, disableEnvironmentEnhancements: false, smoke: 0 | 1, shockwaveParticles: 1, burnMarks: true, disableChroma: false }, colors: { left: [1, 1, 1, 1], right: [1, 1, 1, 1] }}) {
+    config(settings = { beatmapCarachter: "Standard", require: ["yo"], suggest: ["yo"],  noteColors: { left: {"r": 0, "g": 0, "b": 0 }, right: {"r": 0, "g": 0, "b": 0 } }, lightColors: { left: {"r": 0, "g": 0, "b": 0 }, right: {"r": 0, "g": 0, "b": 0 } }}) {
         const info = JSON.parse(fs.readFileSync("Info.dat", 'utf8'))
 
         info._difficultyBeatmapSets.forEach(x => {
             
-            if(x._beatmapCharacteristicName === settings.beatmapCharacter) {
+            if(x._beatmapCharacteristicName === settings.beatmapCarachter) {
                 x._difficultyBeatmaps.forEach(y => {
 
                     y._customData._requirements = settings.require
                     y._customData._suggestions = settings.suggest
 
-                    y._customData._settings = {
-                        _graphics: {
-                            _mirrorGraphicsSettings: settings.settings.mirrorQuality,
-                            _mainEffectGraphicsSettings: settings.settings.bloom,
-                            _smokeGraphicsSettings: settings.settings.smoke,
-                            _maxShockwaveParticles: settings.settings.shockwaveParticles,
-                            _burnMarkTrailsEnabled: settings.settings.burnMarks
-                        },
-                        _playerOptions: {
-                            _advancedHud: settings.settings.advancedHud,
-                            _noTextsAndHuds: settings.settings.noHud
-                        },
-                        _chroma: {
-                            _disableEnvironmentEnhancements: settings.settings.disableEnvironmentEnhancements,
-                            _disableChromaEvents: settings.settings.disableChroma
-                        }
-                    }
+                    y._customData._colorRight = settings.noteColors.right
+                    y._customData._colorLeft = settings.noteColors.left
 
-                    y._customData._envColorRight = settings.colors.right
-                    y._customData._envColorLeft = settings.colors.left
+                    y._customData._envColorRight = settings.lightColors.right
+                    y._customData._envColorLeft = settings.lightColors.left
                 })
             }
-
-            fs.writeFileSync("Info.dat", JSON.stringify(info, null, 4))
             
         })
+
+        fs.writeFileSync("Info.dat", JSON.stringify(info, null, 4))
     }
 
     save() {
