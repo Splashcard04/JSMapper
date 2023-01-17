@@ -17,7 +17,7 @@ class Map {
         diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
     }
 
-    config(settings = { beatmapCarachter: "Standard", require: ["yo"], suggest: ["yo"], settings: { mirrorQuality: 1| 2| 3, noHud: false, advancedHud: false, bloom: 0, disableEnvironmentEnhancements: false, smoke: 0 | 1, shockwaveParticles: 1, burnMarks: true, disableChroma: false } }) {
+    config(settings = { beatmapCarachter: "Standard", require: ["yo"], suggest: ["yo"], settings: { mirrorQuality: 1| 2| 3, noHud: false, advancedHud: false, bloom: 0, disableEnvironmentEnhancements: false, smoke: 0 | 1, shockwaveParticles: 1, burnMarks: true, disableChroma: false }, colors: { left: [1, 1, 1, 1], right: [1, 1, 1, 1] }}) {
         const info = JSON.parse(fs.readFileSync("Info.dat", 'utf8'))
 
         info._difficultyBeatmapSets.forEach(x => {
@@ -45,6 +45,9 @@ class Map {
                             _disableChromaEvents: settings.settings.disableChroma
                         }
                     }
+
+                    y._customData._envColorRight = settings.colors.right
+                    y._customData._envColorLeft = settings.colors.left
                 })
             }
 
