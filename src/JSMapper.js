@@ -17,7 +17,7 @@ class Map {
         diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
     }
 
-    config(settings = { beatmapCarachter: "Standard", require: ["yo"], suggest: ["yo"],  noteColors: { left: {"r": 0, "g": 0, "b": 0 }, right: {"r": 0, "g": 0, "b": 0 } }, lightColors: { left: {"r": 0, "g": 0, "b": 0 }, right: {"r": 0, "g": 0, "b": 0 } }}) {
+    config(settings = { beatmapCarachter: "Standard", require: ["yo"], suggest: ["yo"] }) {
         const info = JSON.parse(fs.readFileSync("Info.dat", 'utf8'))
 
         info._difficultyBeatmapSets.forEach(x => {
