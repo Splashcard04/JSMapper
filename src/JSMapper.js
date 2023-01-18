@@ -3,7 +3,7 @@ const fs = require(`fs`)
 /*
 If you are confused why everything is in 1 main js file, let me explain-
 
-imports / exports in js are dumb.
+imports / exports are dumb in js.
 */
 
 let diff = JSON.parse(fs.readFileSync("ExpertPlusLawless.dat", "utf8"))
@@ -135,7 +135,7 @@ class Note {
         this.customData = { "color": settings.color, "size": settings.scale, "uninteractable": uninteractable, "noteJumpMovementSpeed": settings.njs, 
         "worldRotation": settings.worldRotation, "track": settings.track,
         "noteJumpStartBeatOffset": settings.timeOffset, "coordinates": settings.position,
-        "animation": { "dissolve": settings.dissolve, "definitePosition": settings.definitePosition, "localRotation": settings.localRotation, "rotation": settings.rotation } }
+        "animation": { "dissolve": settings.dissolve, "definitePosition": settings.definitePosition, "localRotation": settings.animateLocalRotation, "rotation": settings.rotation } }
 
     }
 
@@ -725,5 +725,6 @@ module.exports = {
     lightTypes: lightTypes,
     lookup: lookup,
     ease: ease,
-    character: character
+    character: character,
+    r: r
 }
