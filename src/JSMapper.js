@@ -752,5 +752,6 @@ module.exports = {
     lookup: lookup,
     ease: ease,
     character: character,
-    r: r
+    r: r,
+    diff: diff
 }
