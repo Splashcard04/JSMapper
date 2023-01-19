@@ -213,7 +213,7 @@ const lookup = {
 
 
 class Geometry {
-    constructor(settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [], track: "track" } | string, scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0], lightID: 100, lightType: 0 }) {
+    constructor(settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [], track: "track" } | string, scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0], lightID: 100, lightType: 0, track: "bruhhowdidinotknowaboutthisfeaturelmao" }) {
         
         let material;
         let type;
@@ -225,6 +225,7 @@ class Geometry {
         this.scale = settings.scale
         this.position = settings.position
         this.rotation = settings.rotation
+        this.track = settings.track
 
         this.components = { "ILightWithId": { "lightID": settings.lightID, "lightType": settings.lightType }}
     }
