@@ -689,6 +689,31 @@ const character = {
     Lawless: "Lawless"
 }
 
+const diff = {
+    ExpertPlus: {
+        Standard: "ExpertPlusStandard",
+        Lawless: "ExpertPlusLawless"
+    },
+    Expert: {
+        Standard: "ExpertStandard",
+        Lawless: "ExpertLawless"
+    },
+    Hard: {
+        Standard: "HardStandard",
+        Lawless: "HardLawless"
+    },
+    Normal: {
+        Standard: "NormalStandard",
+        Lawless: "NormalLawless"
+    },
+    Easy: {
+        Standard: "EasyStandad",
+        Lawless: "LawlessStandard"
+    }
+}
+
+diff.ExpertPlus.Standard
+
 module.exports = {
     walls: walls,
     fakeWalls: fakeWalls,
