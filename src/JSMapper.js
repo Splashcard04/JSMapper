@@ -11,8 +11,8 @@ let diff = JSON.parse(fs.readFileSync("ExpertPlusLawless.dat", "utf8"))
 diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
 
 class Map {
-    constructor(input = "ExpertPlusLawless.dat", output = "ExpertPlusStandard.dat") {
-        diff = JSON.parse(fs.readFileSync(input))
+    constructor(input = "ExpertPlusLawless", output = "ExpertPlusStandard") {
+        diff = JSON.parse(fs.readFileSync(input+".dat"))
         this.out = output
         diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
     }
@@ -36,7 +36,7 @@ class Map {
     }
 
     save() {
-        fs.writeFileSync(this.out, JSON.stringify(diff, null, 4))
+        fs.writeFileSync(this.out+".dat", JSON.stringify(diff, null, 4))
     }
 }
 

@@ -2,7 +2,7 @@ const fs = require(`fs`)
 
 let diff = JSON.parse(fs.readFileSync("ExpertPlusLawless.dat", "utf8"))
 
-diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
+diff.customData = { _environment: [], _customEvents: [], materials: {} }
 
 
 class Map {
@@ -35,21 +35,29 @@ class Map {
     }
 }
 
-class lightGradient {
-    constructor(settings = { time: 0, type: 0, value: 0, gradient: { duration: 0, startColor: [0, 0, 0,0], endColor: [1, 1, 1, 1], easing: "idk" } } ) {
-        this._time = settings.time
-        this._type = settings.type
-        this._value = settings.value
-        this._customData = { 
-            "_lightGradient": {
-            "_duration": settings.gradient.duration,
-            "_startColor": settings.gradient.startColor,
-            "_endColor": settings.gradient.endColor,
-            "_easing": settings.gradient.easing
-        }}
-    }
-
-    push() {
-        diff.events.push(this)
+class Environment {
+    constructor(id = "E", lookup = "Contains", settings = { position, rotation, lightID, lightType }) {
+        this.id = id
+        this.lookupMethod = lookup
+        this.position = settings.position; this.rotation = settings.rotation; this.components = { "IlightWithID": { }}
     }
 }
+
+new Environment("Sun$", "Regex", {
+    position: [
+        0, -9999, 0
+    ]
+}).push()
+
+new Environment("Sun$", {
+    lookup: "Regex",
+    position: [
+        0, -9999, 0
+    ]              
+}).push()
+
+new Environment({
+    id: pwh,
+    lookup: woeuig,
+    mods: pjsvhfje
+})
