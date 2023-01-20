@@ -2,7 +2,6 @@ const fs = require(`fs`)
 
 /*
 If you are confused why everything is in 1 main js file, let me explain-
-
 imports / exports are dumb in js.
 */
 
@@ -690,7 +689,7 @@ const character = {
     Lawless: "Lawless"
 }
 
-const diff = {
+const diffPath = {
     ExpertPlus: {
         Standard: "ExpertPlusStandard",
         Lawless: "ExpertPlusLawless"
@@ -712,8 +711,6 @@ const diff = {
         Lawless: "LawlessStandard"
     }
 }
-
-diff.ExpertPlus.Standard
 
 module.exports = {
     walls: walls,
