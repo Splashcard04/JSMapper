@@ -184,8 +184,8 @@ class Note {
 
 
 class Bomb {
-    constructor(settings = { time: 0, position: [0, 0], worldRotation: [0, 0, 0], localRotation: [0, 0, 0, 0], rotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: true, color: [1, 1, 1, 1], track: "track", dissolve: [[0, 0], [0, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], scale: [[1, 1, 1, 0], [1, 1, 1, 1]], animateColor: [[0, 0, 0, 0], [0, 0, 0, 1]] }) {
-        if(!settings.time) { this.b = 0 } else { this.b = settings.time }
+    constructor(time = 0, settings = { position: [0, 0], worldRotation: [0, 0, 0], localRotation: [0, 0, 0, 0], rotation: [0, 0, 0], njs: 8, timeOffset: 0, interactable: true, color: [1, 1, 1, 1], track: "track", dissolve: [[0, 0], [0, 1]], animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], definitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], scale: [[1, 1, 1, 0], [1, 1, 1, 1]], animateColor: [[0, 0, 0, 0], [0, 0, 0, 1]] }) {
+        if(!time) { this.b = 0 } else { this.b = time }
 
         this.x = 0
         this.y = 0
