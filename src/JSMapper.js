@@ -5,6 +5,24 @@ If you are confused why everything is in 1 main js file, let me explain-
 imports / exports are dumb in js.
 */
 
+/**
+ * log a message from JSMapper
+ * @param { string } msg the message to log tagged with JSM
+ * @param { strung } errorLevel add warning or error based on situation
+ */
+
+function JSMlog(message, errorLevel) {
+    if(!errorLevel) {
+        console.log(`\x1b[32m [JSMapper]:` + `\x1b[1m \x1b[37m ${message}`)
+    }
+    if(errorLevel == "Error") {
+        console.log(`\x1b[1m \x1b[31m [Error In JSMapper]:` + `\x1b[1m \x1b[37m ${message}`)
+    }
+    if(errorLevel == "Warning") {
+        console.log(`\x1b[1m \x1b[33m [Warning In JSMapper]:` + `\x1b[1m \x1b[37m ${message}`)
+    }
+  }
+
 let diff = JSON.parse(fs.readFileSync("ExpertPlusLawless.dat", "utf8"))
 
 diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
@@ -750,5 +768,6 @@ module.exports = {
     ease: ease,
     character: character,
     r: r,
-    diff: diff
+    diff: diff,
+    JSMlog: JSMlog
 }
