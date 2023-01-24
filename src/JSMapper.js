@@ -215,9 +215,9 @@ class Bomb {
 }
 
 class Environment {
-    constructor(settings = { id, lookup: string = "Contains" | "Regex" | "Exact", position, scale, rotation, duplicate, active, localPosition, localRotation, track, lightID, lightType }) {
+    constructor( lookup = "hello", settings = { id, position, scale, rotation, duplicate, active, localPosition, localRotation, track, lightID, lightType }) {
         this.id = settings.id
-        this.lookupMethod = settings.lookup
+        this.lookupMethod = lookup
         this.position = settings.position
         this.scale = settings.scale
         this.rotation = settings.rotation
