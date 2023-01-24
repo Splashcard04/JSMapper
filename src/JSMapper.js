@@ -16,12 +16,12 @@ class Map {
         diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
     }
 
-    config(settings = { beatmapCarachter: "Standard", require: ["yo"], suggest: ["yo"] }) {
+    config(settings = { require: ["yo"], suggest: ["yo"] }) {
         const info = JSON.parse(fs.readFileSync("Info.dat", 'utf8'))
 
         info._difficultyBeatmapSets.forEach(x => {
             
-            if(x._beatmapCharacteristicName === settings.beatmapCarachter) {
+            if(x._beatmapCharacteristicName.indexOf(this.out) !== -1) {
                 x._difficultyBeatmaps.forEach(y => {
 
                     y._customData._requirements = settings.require
