@@ -67,11 +67,27 @@ const chains = diff.burstSliders
 const fakeChains = diff.customData.fakeBurstSliders
 const arcs = diff.sliders
 
-function r(number1 = 0, number2 = 10) {
-    if(number1 > number2) {
-        return Math.random() * (number1 - number2) + number2;
-    } else {
-        return Math.random() * (number2 - number1) + number1;
+
+/**
+ * generate a random number / integer between 2 values
+ * @param { number } number1 the first number (does not have to be the minimum)
+ * @param { number } number2 the second number (does not have to be the maximum)
+ * @returns a random number wetween the 2 values
+ */
+function r(number1 = 0, number2 = 10, rounding = false) {
+    if(rounding === true) {
+        if(number1 > number2) {
+            return Math.floor(Math.random() * (number1 - number2) + number2) +1
+        } else {
+            return Math.floor(Math.random() * (number2 - number1) + number1) +1
+        }
+    }
+    if(!rounding || rounding === false) {
+        if(number1 > number2) {
+            return Math.random() * (number1 - number2) + number2
+        } else {
+            return Math.random() * (number2 - number1) + number1
+        }
     }
 }
 
