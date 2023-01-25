@@ -28,12 +28,21 @@ let diff = JSON.parse(fs.readFileSync("ExpertPlusLawless.dat", "utf8"))
 diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
 
 class Map {
+    
+    /**
+    * Initialize a map with an input difficulty and and output difficulty
+    * @param input the input to read **Put Notes Here**
+    * @param output the output to apply changes to
+    * @method config apply requirements, suggestions and file formatting to your info.dat file
+    * @method save apply changes to the specified output file
+    */
     constructor(input = "ExpertPlusLawless", output = "ExpertPlusStandard") {
         diff = JSON.parse(fs.readFileSync(input+".dat"))
         this.out = output
         diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
     }
-
+    
+    /**apply requirements, suggestions and fileFormatting to your difficulty file*/
     config(settings = { require: ["yo"], suggest: ["yo"], formatDataFile: false }) {
         if(!settings.formatDataFile || settings.formatDataFile) { this.format = false } else { this.format = settings.formatDataFile }
         const info = JSON.parse(fs.readFileSync("Info.dat", 'utf8'))
@@ -52,7 +61,7 @@ class Map {
 
         fs.writeFileSync("Info.dat", JSON.stringify(info, null, 4))
     }
-
+    /**save all changes to the specified output data file*/
     save() {
         if(!this.format || this.format === undefined | false) {
            fs.writeFileSync(this.out+".dat", JSON.stringify(diff, null, 0))
