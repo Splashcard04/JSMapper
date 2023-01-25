@@ -34,7 +34,8 @@ class Map {
         diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeBombNotes: [], fakeObstacles: [], fakeBurstSliders: [], materials: {} }
     }
 
-    config(settings = { require: ["yo"], suggest: ["yo"] }) {
+    config(settings = { require: ["yo"], suggest: ["yo"], formatDataFile: false }) {
+        if(!settings.formatDataFile || settings.formatDataFile) { this.format = false } else { this.format = settings.formatDataFile }
         const info = JSON.parse(fs.readFileSync("Info.dat", 'utf8'))
 
         info._difficultyBeatmapSets.forEach(x => {
@@ -53,7 +54,11 @@ class Map {
     }
 
     save() {
-        fs.writeFileSync(this.out+".dat", JSON.stringify(diff, null, 4))
+        if(!this.format || this.format === undefined | false) {
+           fs.writeFileSync(this.out+".dat", JSON.stringify(diff, null, 0))
+        } else {
+           fs.writeFileSync(this.out+".dat", JSON.stringify(diff, null, 4))
+        }
     }
 }
 
