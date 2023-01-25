@@ -1,10 +1,11 @@
 @echo off
 :: check for updates
-npm i -g nodemon
-:: check for updates
 npm i splashcard_jsmapper
+:loop
 node script.js
 
 echo Starting Script Reload
 nodemon script.js
 echo Script Reload Finished
+cls
+goto loop
