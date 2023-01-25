@@ -5,4 +5,6 @@ npm i splashcard_jsmapper :: check for update
 
 :: nodemon will handel the automatic reload so that npm installs are only run when the batch is first run
 
+echo Starting Script ReLoad
 nodemon ./script.js
+echo Script Saved
