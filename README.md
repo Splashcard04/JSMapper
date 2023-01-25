@@ -15,5 +15,10 @@ and filtering object utilities
 * All tools are stored in an npm module meaning that node.js is a requirement if you would like to use this tool
 * This framework is meant for people with small amounts of coding experience, if you are more advanced I would highly reccomend [ReMapper](https://github.com/Swifter1243/ReMapper)
 
+# Running Options
+JSMapper offers 2 options for running the script and writing changes,
+* Run manually each time
+* Refresh on save with a batch file
+see more on these options in the wiki
 
 ### **To get started with JSmapper, head over to the [wiki](https://github.com/Splashcard04/JSMapper/wiki)**
