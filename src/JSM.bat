@@ -1,6 +1,12 @@
 @echo off
-mode con: cols=45 lines=55
+mode con: cols=65 lines=50
 
-echo starting nodemon sequence
+echo Starting ReLoad
 
-nodemon note.js
+:loop
+echo [96mStarting Script ReLoad[0m
+node script.js
+echo [32mScript ReLoad Finished [0m
+
+pause
+goto loop
