@@ -62,49 +62,48 @@ class Map {
         fs.writeFileSync("Info.dat", JSON.stringify(info, null, 4))
     }
     
-     /**log data from your map to the console */
+         /**log data from your map to the console */
     log(settings = { vanila: true, modded: false }) {
         if(!settings || settings.vanila === true && settings.modded === false) {
             console.log(`
-            \x1b[36m\x1b[4m\x1b[1mVanila Map Data: \n
-            \x1b[0m
-            \x1b[35m\x1b\x1b[1m\x1b[4mObjects:
-            \x1b[0m
+            \x1b[36m\x1b[4m\x1b[1mVanila Map Data:\x1b[0m \n
+
+            \x1b[35m\x1b\x1b[1m\x1b[4mObjects:\x1b[0m
+
             \x1b[35m\x1b\x1bb   Bloqs: ${diff.colorNotes.length}
             \x1b[35m\x1b\x1bb   Chains: ${diff.burstSliders.length}
             \x1b[35m\x1b\x1bb   Arcs: ${diff.sliders.length}
             \x1b[35m\x1b\x1bb   Bombs: ${diff.bombNotes.length}
-            \x1b[35m\x1b\x1bb   Walls: ${diff.obstacles.length}
-            \x1b[0m
-            \x1b[34m\x1b\x1b[1m\x1b[4mEvents:
-            \x1b[0m
+            \x1b[35m\x1b\x1bb   Walls: ${diff.obstacles.length}\x1b[0m
+
+            \x1b[34m\x1b\x1b[1m\x1b[4mEvents:\x1b[0m
+
             \x1b[34m\x1b\x1bb   Light Events: ${diff.basicBeatmapEvents.length}
             \x1b[34m\x1b\x1bb   Boost Color Events: ${diff.colorBoostBeatmapEvents.length}
             `)
         }
         if(settings.modded === true && settings.vanila === false) {
             console.log(`
-            \x1b[36m\x1b[1m\x1b[4mModded Map Data:\
+            \x1b[36m\x1b[1m\x1b[4mModded Map Data:\x1b[0m
             \n
-            \x1b[35m\x1b\x1b[1m\x1b[4mFake Objects:
+            \x1b[35m\x1b\x1b[1m\x1b[4mFake Objects:\x1b[0m
             \x1b[0m
             \x1b[35m    Fake Bloqs: ${diff.customData.fakeColorNotes.length}
             \x1b[35m    Fake Chains: ${diff.customData.fakeBurstSliders.length}
             \x1b[35m    Fake Bombs: ${diff.customData.fakeBombNotes.length}
             \x1b[35m    Fake Walls: ${diff.customData.fakeObstacles.length}
             \n
-            \x1b[34m\x1b[1m\x1b[4mMisc:
+            \x1b[34m\x1b[1m\x1b[4mMisc:\x1b[0m
             \x1b[0m
             \x1b[34m\x1b[1m    Custom Events: ${diff.customData.customEvents.length}
-
             \x1b[34m\x1b[1m    Environment: ${diff.customData.environment.length}
             `)
         }
         if(settings.modded === true && settings.vanila === true) {
             console.log(`
-            \x1b[36m\x1b[4m\x1b[1mVanila Map Data: \n
+            \x1b[36m\x1b[4m\x1b[1mVanila Map Data:\x1b[0m\x1b[0m \n
                 \x1b[0m
-                \x1b[35m\x1b\x1b[1m\x1b[4mObjects:
+                \x1b[35m\x1b\x1b[1m\x1b[4mObjects:\x1b[0m
                 \x1b[0m
                 \x1b[35m\x1b\x1bb   Bloqs: ${diff.colorNotes.length}
                 \x1b[35m\x1b\x1bb   Chains: ${diff.burstSliders.length}
@@ -112,21 +111,21 @@ class Map {
                 \x1b[35m\x1b\x1bb   Bombs: ${diff.bombNotes.length}
                 \x1b[35m\x1b\x1bb   Walls: ${diff.obstacles.length}
                 \x1b[0m
-                \x1b[34m\x1b\x1b[1m\x1b[4mEvents:
+                \x1b[34m\x1b\x1b[1m\x1b[4mEvents:\x1b[0m
                 \x1b[0m
                 \x1b[34m\x1b\x1bb   Light Events: ${diff.basicBeatmapEvents.length}
                 \x1b[34m\x1b\x1bb   Boost Color Events: ${diff.colorBoostBeatmapEvents.length}
                 \n\n
-                \x1b[36m\x1b[1m\x1b[4mModded Map Data:\
+                \x1b[36m\x1b[1m\x1b[4mModded Map Data:\x1b[0m
                 \n
-                \x1b[35m\x1b\x1b[1m\x1b[4mFake Objects:
+                \x1b[35m\x1b\x1b[1m\x1b[4mFake Objects:\x1b[0m
                 \x1b[0m
                 \x1b[35m    Fake Bloqs: ${diff.customData.fakeColorNotes.length}
                 \x1b[35m    Fake Chains: ${diff.customData.fakeBurstSliders.length}
                 \x1b[35m    Fake Bombs: ${diff.customData.fakeBombNotes.length}
                 \x1b[35m    Fake Walls: ${diff.customData.fakeObstacles.length}
                 \n
-                \x1b[34m\x1b[1m\x1b[4mMisc:
+                \x1b[34m\x1b[1m\x1b[4mMisc:\x1b[0m
                 \x1b[0m
                 \x1b[34m\x1b[1m    Custom Events: ${diff.customData.customEvents.length}
             
