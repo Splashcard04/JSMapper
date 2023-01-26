@@ -8,7 +8,7 @@ imports / exports are dumb in js.
 /**
  * log a message from JSMapper
  * @param { string } msg the message to log tagged with JSM
- * @param { strung } errorLevel add warning or error based on situation
+ * @param { string } errorLevel add warning or error based on situation
  */
 
 function JSMlog(message, errorLevel) {
