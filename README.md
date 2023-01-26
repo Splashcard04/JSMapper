@@ -18,7 +18,7 @@ and filtering object utilities
 # Running Options
 JSMapper offers 2 options for running the script and writing changes,
 * Run manually each time
-* Refresh on save with batch
+* Refresh on click with batch
 more info on each in the wiki
 
 ### **To get started with JSmapper, head over to the [wiki](https://github.com/Splashcard04/JSMapper/wiki)**
