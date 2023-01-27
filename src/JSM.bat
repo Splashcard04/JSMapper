@@ -1,7 +1,6 @@
 @echo off
 mode con: cols=65 lines=50
 
-echo Starting ReLoad
 
 ::logs for starting script, and ending script
 :loop
