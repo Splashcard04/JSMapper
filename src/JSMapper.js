@@ -67,17 +67,13 @@ class Map {
         if(!settings || settings.vanila === true && settings.modded === false) {
             console.log(`
             \x1b[36m\x1b[4m\x1b[1mVanila Map Data:\x1b[0m \n
-
             \x1b[35m\x1b\x1b[1m\x1b[4mObjects:\x1b[0m
-
             \x1b[35m\x1b\x1bb   Bloqs: ${diff.colorNotes.length}
             \x1b[35m\x1b\x1bb   Chains: ${diff.burstSliders.length}
             \x1b[35m\x1b\x1bb   Arcs: ${diff.sliders.length}
             \x1b[35m\x1b\x1bb   Bombs: ${diff.bombNotes.length}
             \x1b[35m\x1b\x1bb   Walls: ${diff.obstacles.length}\x1b[0m
-
             \x1b[34m\x1b\x1b[1m\x1b[4mEvents:\x1b[0m
-
             \x1b[34m\x1b\x1bb   Light Events: ${diff.basicBeatmapEvents.length}
             \x1b[34m\x1b\x1bb   Boost Color Events: ${diff.colorBoostBeatmapEvents.length}
             `)
@@ -302,9 +298,9 @@ class Bomb {
 }
 
 class Environment {
-    constructor( lookup = "hello", settings = { id, position, scale, rotation, duplicate, active, localPosition, localRotation, track, lightID, lightType }) {
+    constructor(settings = {  }/*{ id, position, scale, rotation, duplicate, active, localPosition, localRotation, track, lightID, lightType }*/) {
         this.id = settings.id
-        this.lookupMethod = lookup
+        this.lookupMethod = settings.lookup
         this.position = settings.position
         this.scale = settings.scale
         this.rotation = settings.rotation
@@ -481,6 +477,7 @@ class animateTrack {
         if(!settings.duration) { this.duration = 10 } else { this.duration = settings.duration }
 
         this.track = settings.track
+        this.rot = settings.animateRotation
         this.pos = settings.animatePosition
         this.dis = settings.animateDissolve
         this.disa = settings.animateDissolveArrow
@@ -488,8 +485,8 @@ class animateTrack {
         this.scale = settings.animateScale
         this.color = settings.animateColor
 
-        this.d = {"position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
-        "definitePosition": settings.animateDefinitePosition, "scale": settings.animateScale, "color": settings.animateColor }
+        //this.d = {"position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
+        //"definitePosition": settings.animateDefinitePosition, "scale": settings.animateScale, "color": settings.animateColor }
     }
 
     push() {
@@ -499,12 +496,15 @@ class animateTrack {
             "d": {
                 "track": this.track,
                 "duration": this.duration,
-                "position": this.pos,
-                "dissolve": this.dis,
-                "dissolveArrow": this.disa,
-                "definitePosition": this.defpos,
-                "scale": this.scale,
-                "color": this.color
+                "animation": {
+                    "position": this.pos,
+                    "dissolve": this.dis,
+                    "rotation": this.rot,
+                    "dissolveArrow": this.disa,
+                    "definitePosition": this.defpos,
+                    "scale": this.scale,
+                    "color": this.color
+                }
 
             }
         })
