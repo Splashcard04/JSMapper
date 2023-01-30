@@ -29,7 +29,7 @@ diff.customData = { environment: [], customEvents: [], fakeColorNotes: [], fakeB
 
 class Map {
     
-    /**
+    /**aa
     * Initialize a map with an input difficulty and and output difficulty
     * @param input the input to read **Put Notes Here**
     * @param output the output to apply changes to
@@ -496,16 +496,15 @@ class animateTrack {
             "d": {
                 "track": this.track,
                 "duration": this.duration,
-                "animation": {
-                    "position": this.pos,
-                    "dissolve": this.dis,
-                    "rotation": this.rot,
-                    "dissolveArrow": this.disa,
-                    "definitePosition": this.defpos,
-                    "scale": this.scale,
-                    "color": this.color
-                }
-
+                
+                "position": this.pos,
+                "dissolve": this.dis,
+                "rotation": this.rot,
+                "dissolveArrow": this.disa,
+                "definitePosition": this.defpos,
+                "scale": this.scale,
+                "color": this.color
+              
             }
         })
     }
