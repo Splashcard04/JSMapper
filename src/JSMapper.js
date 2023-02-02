@@ -691,7 +691,7 @@ class cinemaScreen {
         fs.writeFileSync("cinema-video.json", JSON.stringify(this, null, 4))
     }
 }
-
+/*
 class animateFog {
     constructor(settings = { time: 0, track: "track", attenuation: [[0, 0], [0, 1]], offset: [[0, 0], [0, 1]], height: [[0, 0], [0, 1]]}) {
         this.b = settings.time
@@ -702,7 +702,7 @@ class animateFog {
     push() {
         diff.customData.customEvents.push(this)
     }
-}
+}*/
 
 
 function notesBetween(time, timeEnd, data) {
@@ -829,6 +829,35 @@ const diffPath = {
     Easy: {
         Standard: "EasyStandad",
         Lawless: "LawlessStandard"
+    }
+}
+
+class animateFog {
+    constructor(settings = { time: number, duration: number, attenuation: [[0, 0]]}) {
+        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
+        if(!settings.duration) { this.duration = 10 } else { this.duration = settings.duration }
+        this.attenuation = settings.attenuation
+        this.trackAdd = Math.random() * 16
+    }
+
+    push() {
+        diff.customData.customEvents.push(
+        {
+            "b": this.time,
+            "t": "AnimateTrack",
+            "d": {
+                "track": `fog${this.trackAdd}`,
+                "duration": this.duration,
+                "attenuation": this.attenuation
+            }
+        },             
+        {
+            "b": this.time,
+            "t": "AssignFogTrack",
+            "d": {
+                "track": `fog${this.trackAdd}`
+            }
+        })
     }
 }
 

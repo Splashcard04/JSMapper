@@ -1,5 +1,4 @@
 const fs = require(`fs`);
-const { getPackedSettings } = require("http2");
 
 let diff = JSON.parse(fs.readFileSync("ExpertPlusLawless.dat"))
 let outputFile;
