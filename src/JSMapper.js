@@ -679,7 +679,7 @@ class cinemaScreen {
         if(!settings.videoFile) { this.videoFile = file.videoFile } else { this.videoFile = settings.videoFile }
         this.duration = settings.duration
         this.screenPosition = { "x": settings.position[0], "y": settings.position[1], "z": settings.position[2] }
-        this.screenRotation = settings.rotation
+        this.screenRotation = { "x": settings.rotation[0], "y": settings.rotation[1], "z": settings.rotation[2] }
         this.loop = settings.loop
         this.screenHeight = settings.height
         this.transparency = settings.transparency
