@@ -833,13 +833,19 @@ const diffPath = {
 }
 
 class animateFog {
-    constructor(settings = { time: number, duration: number, attenuation: [[0, 0]]}) {
+    /**
+     * animate the fog in an environment without an animate track
+     * @param { { } } settings the modifiers for your animated fog
+     */
+    constructor(settings = { time: number, duration: number, attenuation: [[0, 0]], offset: [[0,0]], height: [[1,1]] }) {
         if(!settings.time) { this.time = 0 } else { this.time = settings.time }
         if(!settings.duration) { this.duration = 10 } else { this.duration = settings.duration }
         this.attenuation = settings.attenuation
         this.trackAdd = Math.random() * 16
+        this.offset = settings.offset
+        this.height = settings.height
     }
-
+    /**push the fog animation to the difficulty */
     push() {
         diff.customData.customEvents.push(
         {
@@ -848,7 +854,9 @@ class animateFog {
             "d": {
                 "track": `fog${this.trackAdd}`,
                 "duration": this.duration,
-                "attenuation": this.attenuation
+                "attenuation": this.attenuation,
+                "height": this.height,
+                "offset": this.offset
             }
         },             
         {
