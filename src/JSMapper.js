@@ -900,5 +900,6 @@ module.exports = {
     character: character,
     r: r,
     diff: diff,
-    JSMlog: JSMlog
+    JSMlog: JSMlog,
+    animateFog: animateFog
 }
