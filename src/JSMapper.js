@@ -678,7 +678,7 @@ class cinemaScreen {
         this.author = file.author
         if(!settings.videoFile) { this.videoFile = file.videoFile } else { this.videoFile = settings.videoFile }
         this.duration = settings.duration
-        this.screenPosition = settings.position
+        this.screenPosition = { "x": settings.position[0], "y": settings.position[1], "z": settings.position[2] }
         this.screenRotation = settings.rotation
         this.loop = settings.loop
         this.screenHeight = settings.height

@@ -88,7 +88,8 @@ module.exports.Wall = class Wall {
      */
     constructor(settings = { time: 0, duration: 10, animate: { 
         color: [[1, 1, 1, 1]],
-        definitePosition: [[0, 0, 0, 0]]
+        definitePosition: [[0, 0, 0, 0]],
+        dissolve: [[0, 0]]
      }, color: [1, 1, 1, 1],
      
     
@@ -102,7 +103,8 @@ module.exports.Wall = class Wall {
             _color: settings.color,
             _animation: {
                 _definitePosition: settings.animate.definitePosition,
-                _color: settings.animate.color
+                _color: settings.animate.color,
+                _dissolve: settings.animate.dissolve
             }
         }
     }
