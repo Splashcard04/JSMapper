@@ -80,3 +80,34 @@ class Note {
         diff._notes.push(this)
     }
 }
+
+module.exports.Wall = class Wall {
+    /**
+     * create a new wall
+     * @param { {} } settings the parameters for the wall to follow
+     */
+    constructor(settings = { time: 0, duration: 10, animate: { 
+        color: [[1, 1, 1, 1]],
+        definitePosition: [[0, 0, 0, 0]]
+     }, color: [1, 1, 1, 1],
+     
+    
+    }) {
+        this._time = settings.time; 
+        this._duration = settings.duration
+        this._lineIndex = 0; this._lineLayer = 0
+        this._width = 1; this._height = 1
+
+        this._customData = {
+            _color: settings.color,
+            _animation: {
+                _definitePosition: settings.animate.definitePosition,
+                _color: settings.animate.color
+            }
+        }
+    }
+    /**push the created wall to the difficulty */
+    push() {
+        diff._obstacles.push(this)
+    }
+}
