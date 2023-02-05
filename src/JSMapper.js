@@ -691,74 +691,94 @@ class cinemaScreen {
         fs.writeFileSync("cinema-video.json", JSON.stringify(this, null, 4))
     }
 }
-/*
-class animateFog {
-    constructor(settings = { time: 0, track: "track", attenuation: [[0, 0], [0, 1]], offset: [[0, 0], [0, 1]], height: [[0, 0], [0, 1]]}) {
-        this.b = settings.time
-        this.t = "AnimateComponent"
-        this.d = { "BloomFogEnvironment": { "track": settings.track, "attenuation": settings.attenuation, "offset": settings.offset, "height": settings.height } }
-    }
 
-    push() {
-        diff.customData.customEvents.push(this)
-    }
-}*/
-
-
-function notesBetween(time, timeEnd, data) {
+function notesBetween(time, timeEnd, forNote = (n: Note) => n) {
     diff.colorNotes.forEach(n => {
         if(n.b >= time && n.b <= timeEnd) {
-            n.customData = data
+            forNote(n)
         }
     })
 
     diff.customData.fakeColorNotes.forEach(n => {
         if(n.b >= time && n.b <= timeEnd) {
-            n.customData = data
+            forNote(n)
         }
     })
-}
-
-function arcsBetween(time, timeEnd, data) {
+    
     diff.sliders.forEach(n => {
         if(n.b >= time && n.b <= timeEnd) {
-            n.customData = data
+            forNote(n)
         }
     })
 
     diff.customData.fakeSliders.forEach(n => {
         if(n.b >= time && n.b <= timeEnd) {
-            n.customData = data
+            forNote(n)
         }
     })
-}
-
-function chainsBetween(time, timeEnd, data) {
+    
     diff.burstSliders.forEach(n => {
         if(n.b >= time && n.b <= timeEnd) {
-            n.customData = data
+            forNote(n)
         }
     })
 
     diff.customData.fakeBurstSliders.forEach(n => {
         if(n.b >= time && n.b <= timeEnd) {
-            n.customData = data
+            forNote(n)
         }
     })
 }
 
-function wallsBetween(time, timeEnd, data) {
+function arcsBetween(time, timeEnd, forNote = (n = Note) => n) {
+    diff.sliders.forEach(n => {
+        if(n.b >= time && n.b <= timeEnd) {
+            forNote(n)
+        }
+    })
+
+    diff.customData.fakeSliders.forEach(n => {
+        if(n.b >= time && n.b <= timeEnd) {
+            forNote(n)
+        }
+    })
+}
+
+function chainsBetween(time, timeEnd, forNote = (n = Note) => n) {
+    diff.burstSliders.forEach(n => {
+        if(n.b >= time && n.b <= timeEnd) {
+            forNote(n)
+        }
+    })
+
+    diff.customData.fakeBurstSliders.forEach(n => {
+        if(n.b >= time && n.b <= timeEnd) {
+            forNote(n)
+        }
+    })
+}
+
+function wallsBetween(time, timeEnd, forWall = (n = Wall) => n) {
     diff.obstacles.forEach(n => {
         if(n.b >= time && n.b <= timeEnd) {
-            n.customData = data
+            forWall(n)
         }
     })
 
     diff.customData.fakeObstacles.forEach(n => {
         if(n.b >= time && n.b <= timeEnd) {
-            n.customData = data
+            forWall(n)
         }
     })
+}
+
+function bloqsBetween(time, timeEnd, forNote = (n = Note) => n) {
+    diff.colorNotes.forEach(x => { if(x.b >= time && x.b <= timeEnd) {
+        forNote(x)
+    }})
+    diff.customData.fakeColorNotes.forEach(x => { if(x.b >= time && x.b <= timeEnd) {
+        forNote(x)
+    }})
 }
 
 const ease = {
