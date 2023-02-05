@@ -869,6 +869,16 @@ class animateFog {
     }
 }
 
+const shader = {
+    standard: "Standard",
+    transparentLight: "TransparentLight",
+    opaqueLight: "OpaqueLight",
+    billieWater: "BillieWater",
+    waterfallMirror: "WaterfallMirror",
+    interscopeCar: "InterscopeCar",
+    interscopeConcrete: "InterscopeConcrete"
+}
+
 module.exports = {
     walls: walls,
     fakeWalls: fakeWalls,
@@ -909,5 +919,6 @@ module.exports = {
     r: r,
     diff: diff,
     JSMlog: JSMlog,
-    animateFog: animateFog
+    animateFog: animateFog,
+    shader: shader
 }
