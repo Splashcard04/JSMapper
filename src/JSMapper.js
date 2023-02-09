@@ -377,9 +377,9 @@ class modelToWall {
                 "w": 1,
                 "h": 3,
                 "customData": {
-                    "size": obj.scale,
                     "color": obj.color,
                     "animation": {
+                        "size": obj.scale,
                         "definitePosition": obj.pos,
                         "localRotation": obj.rot
                     }
