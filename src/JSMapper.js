@@ -424,34 +424,56 @@ class modelToEnvironment {
     }
 }
 
-class modeltoGeometry {
-    constructor(path = "Scene", settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader, shaderKeywords} }) {
-        this.path = JSON.parse(fs.readFileSync(path+".rmmodel"))
+class modelToGeometry {
+    constructor(fileName = "scene", settings = { type: "Cube" | "Cylinder" | "Capsule" | "Triangle",
+    material: {
+        shader: "Standard" | "OpaqueLight" | "TransparentLight" | "BillieWater" | "BaseWater" | "WaterfallMirror"|
+        "BTSPillar" | "InterscopeCar" | "InterscopeConcrete", color: [1, 1, 1,1], shaderKeywords: ["string"]
+    } }) {
+        this.file = JSON.parse(fs.readFileSync(fileName+".rmmodel"))
+        this.baseMat = settings.material
         this.type = settings.type
+    }
 
-        this.color = settings.material.color
-        this.shader = settings.material.shader
-        this.shaderKeywords = settings.material.shaderKeywords
+    addObjects(track = "blaargz", settings = { type: "Cube" | "Cylender" | "Capsule" | "Triangle", 
+        material: {
+            shader: "Standard" | "OpaqueLight" | "TransparentLight" | "BillieWater" | "BaseWater" | "WaterfallMirror"|
+        "BTSPillar" | "InterscopeCar" | "InterscopeConcrete", 
+        color: [1, 1, 1,1], shaderKeywords: ["string"]
+        }
+    }) {
+        this.file.objects.forEach(obj => {
+            if(obj.track === track) {
+                diff.geometry.push(
+                    {
+                        "geometry" : {
+                            "type": settings.type,
+                            "material": settings.material
+                        },
+                        "scale": obj.scale,
+                        "position": obj.pos,
+                        "localRotation": obj.rot
+                    }
+                )
+            }
+        })
     }
 
     push() {
-        this.path.objects.forEach(obj => {
-            diff.customData.environment.push({
-                "geometry": {
-                    "type": this.type,
-                    "material": {
-                        "color": this.color,
-                        "shader": this.shader,
-                        "shaderKeywords": this.shaderKeywords
-                    }
-                },
-                "scale": obj.scale,
-                "position": obj.pos,
-                "localRotation": obj.rot
-            })
+        this.file.objects.forEach(obj => {
+            diff.customData.environment.push({"geometry": {
+                "type": this.type,
+                "material": this.baseMat,
+            },
+            scale: obj.scale,
+            "localRotation": object.rot,
+            "localPosition": obj.pos
+        })
         })
     }
 }
+
+
 
 
 
@@ -906,6 +928,13 @@ const shader = {
     interscopeConcrete: "InterscopeConcrete"
 }
 
+const Shape = {
+    cube: "Cube",
+    capsule: "Capsule",
+    triangle: "Triangle",
+    cylinder: "Cylinder"
+}
+
 module.exports = {
     Map: Map,
     Note: Note,
@@ -938,5 +967,6 @@ module.exports = {
     diff: diff,
     JSMlog: JSMlog,
     animateFog: animateFog,
-    shader: shader
+    Shader: shader,
+    Shape: Shape
 }
