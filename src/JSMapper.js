@@ -138,17 +138,24 @@ class Map {
            fs.writeFileSync(this.out+".dat", JSON.stringify(diff, null, 4))
         }
     }
-}
+    
+    //variables////////////////////////////////////
 
-const walls = diff.obstacles
-const fakeWalls = diff.customData.fakeObstacles
-const notes = diff.colorNotes
-const fakeNotes = diff.customData.fakeColorNotes
-const bombs = diff.bombNotes
-const fakeBombs = diff.customData.fakeBombNotes
-const chains = diff.burstSliders
-const fakeChains = diff.customData.fakeBurstSliders
-const arcs = diff.sliders
+    get notes() { return diff.colorNotes }
+    get fakeNotes() { return diff.customData.fakeColorNotes }
+    get walls() { return diff.obstacles }
+    get fakeWalls() { return diff.customData.fakeObstacles }
+    get bombs() { return diff.bombNotes }
+    get fakeBombNotes() { return diff.customData.fakeBombNotes }
+    get chains() { return diff.burstSliders }
+    get fakeChains() { return diff.customData.fakeBurstSliders }
+    get arcs() { return diff.sliders }
+    get lightEvents() { return diff.basicBeatmapEvents }
+
+    get materials() { return diff.customData.materials }
+    get environment() { return diff.customData.environment }
+    get customEvents() { return diff.customData.customEvents }
+}
 
 
 /**
@@ -900,15 +907,6 @@ const shader = {
 }
 
 module.exports = {
-    walls: walls,
-    fakeWalls: fakeWalls,
-    notes: notes,
-    fakeNotes: fakeNotes,
-    bombs: bombs,
-    fakeBombs: fakeBombs,
-    chains: chains,
-    fakeChains: fakeChains,
-    arcs: arcs,
     Map: Map,
     Note: Note,
     Wall: Wall,
