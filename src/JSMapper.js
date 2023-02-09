@@ -362,15 +362,18 @@ class modelToWall {
     constructor(path = "path" ,settings = { time: 0, duration: 10 }) {
         this.path = JSON.parse(fs.readFileSync(path+".rmmodel", 'utf8'))
         this.objects = this.path.objects
+
+        this.duration = settings.duration
+        this.time = settings.time
     }
 
     push() {
-        objects.forEach(obj => {
+        this.objects.forEach(obj => {
             diff.customData.fakeObstacles.push({
-                "b": settings.time,
+                "b": this.time,
                 "x": 1,
                 "y": 0,
-                "d": settings.duration,
+                "d": this.duration,
                 "w": 1,
                 "h": 3,
                 "customData": {
