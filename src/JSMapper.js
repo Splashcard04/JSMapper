@@ -336,7 +336,7 @@ const lookup = {
 
 
 class Geometry {
-    constructor(settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [], track: "track" } | string, scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0], lightID: 100, lightType: 0, track: "bruhhowdidinotknowaboutthisfeaturelmao" }) {
+    constructor(settings = { type: "Cube", material: { color: [0, 0, 0, 0], shader: "Standard", shaderKeywords: [], track: "track" } | "s", scale: [1, 1, 1], position: [0, 0, 0], rotation: [0, 0, 0], lightID: 100, lightType: 0, track: "bruhhowdidinotknowaboutthisfeaturelmao" }) {
         
         let material;
         let type;
@@ -445,6 +445,7 @@ class modelToGeometry {
         color: [1, 1, 1,1], shaderKeywords: ["string"]
         }
     }) {
+        this.track = track
         this.file.objects.forEach(obj => {
             if(obj.track === track) {
                 diff.geometry.push(
@@ -459,6 +460,38 @@ class modelToGeometry {
                     }
                 )
             }
+        })
+    }
+
+    animate(time, duration) {
+        this.file.objects.forEach(obj => {
+            if(this.track !== obj.track) {
+                const trackTag = Math.floor(Math.random() * 10)
+                diff.customEvents.push({
+                    "b": time,
+                    "t": "AnimateTrack",
+                    "d": {
+                        "track": `track${trackTag}`,
+                        "duration": duration,
+                        "position": obj.pos,
+                        "scale": obj.scale,
+                        "localRotaton": obj.rot
+                    }
+                })
+    
+                diff.customData.environment.push(
+                    {
+                        "geometry" :{
+                            "type": this.type,
+                            "material": this.material
+                        },
+                        "track": `track${trackTag}`
+                    }
+                )
+            } else {
+                return console.log(`Model To Geometry Does not work with added objects YET`)
+            }
+
         })
     }
 
@@ -724,7 +757,7 @@ class cinemaScreen {
     }
 }
 
-function notesBetween(time, timeEnd, forNote = (n: Note) => n) {
+function notesBetween(time, timeEnd, forNote = (n = Note) => n) {
     diff.colorNotes.forEach(n => {
         if(n.b >= time && n.b <= timeEnd) {
             forNote(n)
