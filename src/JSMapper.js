@@ -527,51 +527,52 @@ const lightTypes = {
     gagaRight: 19
 }
 
-
-class animateTrack {
-    constructor(settings = { time: 0, duration: 10, track: "track", 
-    animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]],
-    animateRotation: [[0, 0, 0, 0], [0, 0, 0, 1]],
-    animateDissolve: [[0, 0], [0, 1]], 
-    animateDissolveArrow: [[1, 0], [1, 1]], 
-    animateDefinitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], 
-    animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]],
-    animateColor: [[1, 1, 1, 0], [1, 1, 1, 1]]
-    }) {
-        if(!settings.time) { this.time = 0 } else { this.time = settings.time }
-        if(!settings.duration) { this.duration = 10 } else { this.duration = settings.duration }
-
-        this.track = settings.track
-        this.rot = settings.animateRotation
-        this.pos = settings.animatePosition
-        this.dis = settings.animateDissolve
-        this.disa = settings.animateDissolveArrow
-        this.defpos = settings.animateDefinitePosition
-        this.scale = settings.animateScale
-        this.color = settings.animateColor
-
-        //this.d = {"position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
-        //"definitePosition": settings.animateDefinitePosition, "scale": settings.animateScale, "color": settings.animateColor }
+class ABaseAnimEvent {
+    constructor(time) {
+        this.json = {
+            b: time,
+            t: "",
+            d: {
+                track: undefined,
+                duration: undefined,
+                position: undefined,
+                localPosition: undefined,
+                rotation: undefined,
+                localRotation: undefined,
+                scale: undefined,
+                dissolve: undefined,
+                dissolveArrow: undefined,
+                time: undefined,
+                color: undefined
+            }
+        }
+        return this;
     }
 
+    set time(time) { this.json.b = time; }
+    get time() { return this.json.b; }
+
+    get type() { return this.json.t; }
+
+    set data(data) { this.json.d = data; }
+    get data() { return this.json.d; }
+
     push() {
-        diff.customData.customEvents.push({
-            "b": this.time,
-            "t": "AnimateTrack",
-            "d": {
-                "track": this.track,
-                "duration": this.duration,
-                
-                "position": this.pos,
-                "dissolve": this.dis,
-                "rotation": this.rot,
-                "dissolveArrow": this.disa,
-                "definitePosition": this.defpos,
-                "scale": this.scale,
-                "color": this.color
-              
-            }
-        })
+        diff.customData.customEvents.push(this.json)
+    }
+}
+
+class animateTrack extends ABaseAnimEvent {
+    constructor(time) {
+        super(time);
+        this.json.t = "AnimateTrack";
+    }
+}
+
+class assignPathAnimation extends ABaseAnimEvent {
+    constructor(time) {
+        super(time);
+        this.json.t = "AssignPathAnimation"
     }
 }
 
@@ -589,35 +590,6 @@ class assignPlayerToTrack {
          })
     }
 }
-
-class assignPathAnimation {
-    constructor(settings = {
-    time: 0, 
-    duration: 10,
-    track: "track",
-    animatePosition: [[0, 0, 0, 0], [0, 0, 0, 1]],
-    animateDissolve: [[0, 0], [0, 1]], 
-    animateDissolveArrow: [[1, 0], [1, 1]], 
-    animateDefinitePosition: [[0, 0, 0, 0], [0, 0, 0, 1]], 
-    animateScale: [[1, 1, 1, 0], [1, 1, 1, 1]],
-    animateColor: [[1, 1, 1, 0], [1, 1, 1, 1]]
-    }) {
-        if(!settings.time) { this.b = 0 } else { this.b = settings.time }
-        this.t = "AssignPathAnimation"
-
-        this.d = { "track": settings.track, "duration": settings.duration, "position": settings.animatePosition, "dissolve": settings.animateDissolve, "dissolveArrow": settings.animateDissolveArrow, 
-        "definitePosition": settings.animateDefinitePosition,
-        "scale": settings.animateScale,
-        "color": settings.animateColor
-        }
-    }
-
-    push() {
-        diff.customData.customEvents.push(this)
-    }
-}
-
-
 
 class assignTrackParent {
     constructor(settings = { time: 0, childTracks: ["hello"], parentTrack: "howdy" }) {
